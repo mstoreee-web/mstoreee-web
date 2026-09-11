@@ -1,0 +1,2553 @@
+cat << 'EOF' > ~/bot-wa/webview/index.html
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MStoreeebyAsrul - Digital Store 24 Jam</title>
+    <style>
+        :root {
+            --bg-base: #07090E;
+            --card-bg: #101522;
+            --card-border: #1E2738;
+            --primary-cyan: #00F0FF;
+            --accent-purple: #9D4EDD;
+            --text-main: #FFFFFF;
+            --text-muted: #8E9BAE;
+            --success: #00E676;
+            --danger: #FF3366;
+            --warning: #FFB300;
+            --gold-vip: #FFD700;
+            --ruby-super: #FF007A;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background-color: var(--bg-base); color: var(--text-main); padding-bottom: 130px; }
+
+        /* FLOATING LIVE TICKER TRANSAKSI SUKSES (SEKALI LEWAT) */
+        .live-success-ticker {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 120;
+            background: linear-gradient(90deg, #00F0FF, #9D4EDD);
+            color: #000;
+            font-weight: 900;
+            font-size: 11px;
+            padding: 6px 10px;
+            overflow: hidden;
+            white-space: nowrap;
+            box-shadow: 0 2px 14px rgba(0,240,255,0.6);
+        }
+        .live-ticker-text {
+            display: inline-block;
+            animation: tickerOnce 14s linear forwards;
+        }
+        @keyframes tickerOnce {
+            0% { transform: translateX(100vw); }
+            100% { transform: translateX(-100%); }
+        }
+        
+        .header { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; background: rgba(7,9,14,0.96); border-bottom: 1px solid var(--card-border); position: sticky; top: 0; z-index: 50; backdrop-filter: blur(12px); }
+        .brand-box { display: flex; align-items: center; gap: 10px; }
+        
+        /* LOGO & IDENTITAS CYBERPUNK NEON GLOW */
+        .brand-logo {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--primary-cyan);
+            background: #141926;
+            box-shadow: 0 0 12px rgba(0,240,255,0.6);
+            animation: neonPulse 2.5s infinite alternate;
+        }
+        @keyframes neonPulse {
+            0% { box-shadow: 0 0 8px rgba(0,240,255,0.4), 0 0 16px rgba(157,78,221,0.2); }
+            100% { box-shadow: 0 0 18px rgba(0,240,255,0.85), 0 0 26px rgba(157,78,221,0.6); }
+        }
+        .brand-title {
+            font-size: 16px;
+            font-weight: 900;
+            letter-spacing: 0.6px;
+            line-height: 1.2;
+        }
+        .neon-cyan {
+            color: var(--primary-cyan);
+            text-shadow: 0 0 8px rgba(0,240,255,0.8), 0 0 18px rgba(0,240,255,0.4);
+        }
+        .neon-purple {
+            color: #E0AAFF;
+            text-shadow: 0 0 8px rgba(157,78,221,0.8), 0 0 18px rgba(157,78,221,0.4);
+        }
+        .brand-text p { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+        .user-badge { text-align: right; }
+        .tier-pill { display: inline-block; font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: 12px; background: rgba(157,78,221,0.25); border: 1px solid var(--accent-purple); color: #D8B4FE; }
+        .saldo-display { font-size: 13px; font-weight: 800; color: var(--primary-cyan); margin-top: 3px; text-shadow: 0 0 8px rgba(0,240,255,0.4); }
+
+        .neon-led { width: 8px; height: 8px; border-radius: 50%; display: inline-block; animation: blinkLed 1.4s infinite; }
+        .led-green { background: var(--success); box-shadow: 0 0 8px var(--success); }
+        .led-cyan { background: var(--primary-cyan); box-shadow: 0 0 8px var(--primary-cyan); }
+        .led-purple { background: var(--accent-purple); box-shadow: 0 0 8px var(--accent-purple); }
+        .led-gold { background: var(--gold-vip); box-shadow: 0 0 8px var(--gold-vip); }
+        .led-ruby { background: var(--ruby-super); box-shadow: 0 0 8px var(--ruby-super); }
+        @keyframes blinkLed { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.3; transform: scale(0.85); } }
+
+        /* BANNER INFO TOKO STICKY (MENEMPEL IKUT SCROLL DI BAWAH HEADER) */
+        .neon-announcement-bar {
+            position: sticky;
+            top: 72px;
+            z-index: 48;
+            background: rgba(14, 20, 36, 0.98);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(0,240,255,0.45);
+            border-radius: 12px;
+            margin: 10px 16px 0;
+            padding: 8px 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 16px rgba(0,240,255,0.25);
+            overflow: hidden;
+        }
+        .neon-tag {
+            font-size: 10px;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--primary-cyan), #0072FF);
+            color: #000;
+            padding: 3px 8px;
+            border-radius: 6px;
+            white-space: nowrap;
+        }
+        .announcement-marquee { overflow: hidden; white-space: nowrap; flex: 1; }
+        .announcement-text { display: inline-block; font-size: 11.5px; color: #E0F7FA; font-weight: 700; animation: marqueeAnim 20s linear infinite; }
+
+        .cutoff-banner { display: none; background: rgba(255,179,0,0.1); border: 1px solid var(--warning); border-radius: 12px; margin: 12px 16px 0; padding: 10px 14px; font-size: 11px; color: #FFE082; line-height: 1.4; }
+        .store-closed-banner { display: none; background: rgba(255,51,102,0.15); border: 1px solid var(--danger); border-radius: 12px; margin: 12px 16px 0; padding: 12px 14px; font-size: 12px; color: #FF80AB; text-align: center; font-weight: 800; }
+
+        /* STICKY ORDER BANNER (REALTIME AUTO-POLLING DI BAWAH INFO TOKO) */
+        .order-status-banner {
+            display: none;
+            position: sticky;
+            top: 116px;
+            z-index: 47;
+            background: rgba(14, 20, 36, 0.98);
+            backdrop-filter: blur(12px);
+            border: 1.5px solid var(--primary-cyan);
+            border-radius: 14px;
+            margin: 10px 16px 0;
+            padding: 12px 14px;
+            box-shadow: 0 6px 25px rgba(0,240,255,0.3);
+        }
+        .order-status-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+        .order-badge-pill { font-size: 10px; font-weight: 800; padding: 3px 8px; border-radius: 8px; text-transform: uppercase; }
+        .order-badge-waiting { background: rgba(255,179,0,0.2); color: var(--warning); border: 1px solid var(--warning); }
+        .order-badge-process { background: rgba(0,240,255,0.2); color: var(--primary-cyan); border: 1px solid var(--primary-cyan); }
+        .order-badge-success { background: rgba(0,230,118,0.2); color: var(--success); border: 1px solid var(--success); }
+        .order-badge-expired { background: rgba(255,51,102,0.2); color: var(--danger); border: 1px solid var(--danger); }
+        
+        .order-banner-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 10px; }
+        .btn-order-action { padding: 9px; border-radius: 8px; font-size: 11px; font-weight: 800; border: none; cursor: pointer; text-align: center; }
+
+        .vip-permanent-warning { display: none; border-radius: 12px; padding: 12px 14px; margin-bottom: 12px; font-size: 11.5px; line-height: 1.5; font-weight: 600; }
+        .vip-warning-normal { background: rgba(255, 215, 0, 0.08); border: 1.5px solid var(--gold-vip); color: #FFE082; }
+        .vip-warning-super { background: rgba(255, 0, 122, 0.09); border: 1.5px solid var(--ruby-super); color: #FFB3D9; }
+
+        .marquee-container { overflow: hidden; white-space: nowrap; background: rgba(255, 215, 0, 0.08); border: 1px solid var(--gold-vip); border-radius: 10px; padding: 8px 10px; margin-bottom: 12px; font-size: 11px; font-weight: 800; color: #FFE082; display: none; }
+        .marquee-text { display: inline-block; animation: marqueeAnim 20s linear infinite; }
+        @keyframes marqueeAnim { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+
+        .tab-content { display: none; padding: 16px; max-width: 520px; margin: 0 auto; }
+        .tab-content.active { display: block; }
+
+        .tier-switch-bar { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; background: #0B0E17; padding: 6px; border-radius: 14px; border: 1px solid var(--card-border); margin-bottom: 12px; }
+        .tier-tab-btn { background: none; border: 1px solid transparent; color: var(--text-muted); padding: 10px 4px; border-radius: 10px; font-size: 11px; font-weight: 800; cursor: pointer; transition: all 0.25s ease; text-align: center; }
+        .tier-tab-btn.active.tier-reg { background: rgba(0, 240, 255, 0.12); border-color: var(--primary-cyan); color: var(--primary-cyan); box-shadow: 0 0 12px rgba(0,240,255,0.3); }
+        .tier-tab-btn.active.tier-vip { background: rgba(255, 215, 0, 0.12); border-color: var(--gold-vip); color: var(--gold-vip); box-shadow: 0 0 12px rgba(255,215,0,0.35); }
+        .tier-tab-btn.active.tier-super { background: rgba(255, 0, 122, 0.15); border-color: var(--ruby-super); color: var(--ruby-super); box-shadow: 0 0 14px rgba(255,0,122,0.4); }
+
+        .search-box-wrap { position: relative; margin-bottom: 14px; }
+        .search-input { width: 100%; background: #0B0E17; border: 1.5px solid var(--card-border); border-radius: 12px; color: #fff; padding: 12px 14px 12px 38px; font-size: 12px; outline: none; transition: all 0.2s; }
+        .search-input:focus { border-color: var(--primary-cyan); box-shadow: 0 0 12px rgba(0,240,255,0.25); }
+        .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-size: 14px; color: var(--text-muted); }
+
+        .section-title { font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin: 16px 0 10px; letter-spacing: 1px; display: flex; align-items: center; gap: 6px; }
+        
+        .cat-scroll { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 8px; }
+        .cat-btn { background: var(--card-bg); border: 1px solid var(--card-border); color: #fff; padding: 10px 4px; border-radius: 12px; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer; transition: all 0.2s; text-align: center; white-space: nowrap; }
+        .cat-btn.active { border-color: var(--primary-cyan); background: rgba(0,240,255,0.12); color: var(--primary-cyan); box-shadow: 0 0 12px rgba(0,240,255,0.3); }
+        
+        .service-scroll { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+        .service-pill { flex: 1 1 calc(33.333% - 8px); min-width: 95px; background: var(--card-bg); border: 1px solid var(--card-border); padding: 10px 8px; border-radius: 12px; font-size: 11px; font-weight: 800; color: #E2E8F0; letter-spacing: 0.3px; cursor: pointer; transition: all 0.25s ease; text-align: center; display: flex; align-items: center; justify-content: center; white-space: nowrap; }
+        .service-pill:active { transform: scale(0.96); }
+        .service-pill.active { border-color: var(--primary-cyan); background: rgba(0, 240, 255, 0.12); color: var(--primary-cyan); box-shadow: 0 0 14px rgba(0, 240, 255, 0.4), inset 0 0 8px rgba(0, 240, 255, 0.2); }
+
+        .active-service-badge { display: flex; align-items: center; gap: 6px; background: rgba(157,78,221,0.12); border: 1px solid rgba(157,78,221,0.35); padding: 6px 12px; border-radius: 8px; font-size: 11px; font-weight: 800; color: #E0AAFF; margin-bottom: 12px; }
+
+        .sub-tabs { display: flex; gap: 8px; margin-bottom: 12px; }
+        .sub-tab-btn { flex: 1; background: #0B0E17; border: 1px solid var(--card-border); color: var(--text-muted); padding: 10px; border-radius: 10px; font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
+        .sub-tab-btn.active { border-color: var(--primary-cyan); color: var(--primary-cyan); background: rgba(0,240,255,0.08); box-shadow: 0 0 10px rgba(0,240,255,0.2); }
+
+        .input-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 14px; padding: 12px; display: flex; gap: 8px; }
+        .input-card input { width: 100%; background: #07090E; border: 1px solid var(--card-border); border-radius: 10px; color: #fff; padding: 12px 14px; font-size: 13px; outline: none; transition: border-color 0.2s; }
+        .input-card input:focus { border-color: var(--primary-cyan); box-shadow: 0 0 10px rgba(0,240,255,0.2); }
+
+        .sku-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+        .sku-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 14px; padding: 14px 12px; cursor: pointer; display: flex; flex-direction: column; justify-content: space-between; transition: all 0.2s; position: relative; }
+        .sku-card:active { transform: scale(0.98); }
+        .sku-card.active { border-color: var(--primary-cyan); background: rgba(0,240,255,0.08); box-shadow: 0 0 14px rgba(0,240,255,0.25); }
+        .sku-card.disabled { opacity: 0.45; cursor: not-allowed; border-style: dashed; }
+        .sku-name { font-size: 12px; font-weight: 700; margin-bottom: 8px; line-height: 1.3; }
+        .sku-price { font-size: 14px; font-weight: 900; color: var(--primary-cyan); text-shadow: 0 0 8px rgba(0,240,255,0.3); }
+        .sku-badge-status { font-size: 9px; font-weight: 800; padding: 2px 6px; border-radius: 6px; display: inline-block; margin-top: 4px; }
+
+        .floating-action-bar { display: none; position: fixed; bottom: 62px; left: 0; right: 0; background: rgba(16,21,34,0.98); border-top: 1px solid var(--card-border); padding: 10px 18px; z-index: 55; backdrop-filter: blur(12px); box-shadow: 0 -4px 20px rgba(0,0,0,0.5); }
+        .floating-inner { max-width: 520px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; }
+        .floating-info h4 { font-size: 13px; font-weight: 800; color: #fff; }
+        .floating-info p { font-size: 15px; font-weight: 900; color: var(--primary-cyan); }
+        .btn-float-pay { background: linear-gradient(135deg, var(--accent-purple), #7928CA); color: #fff; border: none; padding: 11px 22px; border-radius: 12px; font-size: 13px; font-weight: 800; cursor: pointer; box-shadow: 0 0 14px rgba(157,78,221,0.5); }
+
+        .denom-chips { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 12px 0; }
+        .denom-chip { background: #07090E; border: 1px solid var(--card-border); color: #fff; padding: 12px 4px; border-radius: 10px; font-size: 13px; font-weight: 800; text-align: center; cursor: pointer; transition: all 0.2s; }
+        .denom-chip.active { border-color: var(--primary-cyan); color: var(--primary-cyan); background: rgba(0,240,255,0.1); box-shadow: 0 0 10px rgba(0,240,255,0.3); }
+
+        .card-box { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; padding: 18px; margin-bottom: 14px; }
+        .btn-action { width: 100%; background: linear-gradient(135deg, var(--accent-purple), #7928CA); color: #fff; border: none; padding: 14px; border-radius: 12px; font-size: 14px; font-weight: 800; cursor: pointer; margin-top: 12px; box-shadow: 0 0 14px rgba(157,78,221,0.4); }
+
+        .profile-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 13px; }
+        .profile-label { color: var(--text-muted); font-weight: 600; }
+        .profile-val { font-weight: 700; color: #fff; }
+
+        .history-container { max-height: 420px; overflow-y: auto; padding-right: 4px; }
+        .history-card { background: #07090E; border: 1px solid var(--card-border); border-radius: 12px; padding: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+        .history-left h5 { font-size: 13px; font-weight: 800; margin-bottom: 3px; color: #fff; }
+        .history-left p { font-size: 11px; color: var(--text-muted); }
+        .history-right { text-align: right; }
+        .history-price { font-size: 13px; font-weight: 900; }
+
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(7,9,14,0.98); border-top: 1px solid var(--card-border); display: flex; justify-content: space-around; padding: 10px 0; z-index: 60; backdrop-filter: blur(10px); }
+        .nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--text-muted); font-size: 11px; font-weight: 700; cursor: pointer; background: none; border: none; }
+        .nav-item.active { color: var(--primary-cyan); text-shadow: 0 0 8px rgba(0,240,255,0.4); }
+        .nav-item span { font-size: 18px; }
+
+        .floating-wa-help {
+            position: fixed;
+            bottom: 74px;
+            right: 16px;
+            background: #25D366;
+            color: #fff;
+            border-radius: 50px;
+            padding: 9px 15px;
+            font-size: 11px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 4px 15px rgba(37,211,102,0.4);
+            z-index: 65;
+            text-decoration: none;
+            cursor: pointer;
+            transition: bottom 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .floating-wa-help.shifted { bottom: 126px; }
+
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.88); z-index: 100; align-items: center; justify-content: center; padding: 16px; backdrop-filter: blur(8px); }
+        .modal-content { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 20px; width: 100%; max-width: 380px; padding: 22px; text-align: center; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
+        .modal-close { position: absolute; top: 12px; right: 16px; color: var(--text-muted); font-size: 24px; cursor: pointer; }
+        .qris-box { background: #fff; border-radius: 14px; padding: 10px; margin: 10px auto; width: 270px; height: 270px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+        .qris-box img { width: 100%; height: 100%; object-fit: contain; }
+
+        .admin-input-row { margin-bottom: 12px; text-align: left; }
+        .admin-input-row label { display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 5px; font-weight: 700; }
+        .admin-input-row input, .admin-input-row textarea { width: 100%; background: #07090E; border: 1px solid var(--card-border); color: #fff; padding: 12px 14px; border-radius: 10px; font-size: 13px; outline: none; }
+
+        .pin-input-field {
+            width: 100% !important;
+            background: #07090E !important;
+            border: 1px solid var(--card-border) !important;
+            border-radius: 10px !important;
+            color: var(--primary-cyan) !important;
+            padding: 13px 14px !important;
+            font-size: 17px !important;
+            letter-spacing: 6px !important;
+            text-align: center !important;
+            font-weight: 800 !important;
+            outline: none !important;
+            -webkit-text-security: disc;
+        }
+
+        .tier-badge-item { display: flex; justify-content: space-between; align-items: center; background: #07090E; border: 1px solid #242D45; padding: 8px 12px; border-radius: 8px; margin-bottom: 6px; }
+        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+        .stat-card { background: #07090E; border: 1px solid var(--card-border); border-radius: 10px; padding: 10px; text-align: center; }
+
+        .member-table-wrap { max-height: 320px; overflow-y: auto; border: 1px solid var(--card-border); border-radius: 10px; }
+        .member-table { width: 100%; border-collapse: collapse; font-size: 11px; text-align: left; }
+        .member-table th { background: #07090E; padding: 8px 10px; color: var(--text-muted); position: sticky; top: 0; }
+        .member-table td { padding: 8px 10px; border-top: 1px solid rgba(255,255,255,0.05); }
+
+        .btn-track-action {
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 11px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .spin-rotate { animation: spin 0.8s infinite linear; display: inline-block; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+    <!-- FLOATING LIVE TICKER TRANSAKSI SUKSES (SEKALI LEWAT) -->
+    <div id="liveSuccessTicker" class="live-success-ticker">
+        <div class="live-ticker-text" id="liveSuccessText">...</div>
+    </div>
+
+    <header class="header">
+        <div class="brand-box">
+            <img src="/logo.jpg" class="brand-logo" onerror="this.onerror=null; this.src='/logo.png';">
+            <div class="brand-text">
+                <h1 class="brand-title"><span class="neon-cyan">MStoreee</span><span class="neon-purple">byAsrul</span></h1>
+                <p><span class="neon-led led-green"></span> Server Normal 24 Jam</p>
+            </div>
+        </div>
+        <div class="user-badge">
+            <button onclick="bukaModalGantiAkun()" style="background:none; border:none; color:var(--text-muted); font-size:10px; cursor:pointer; text-decoration:underline; display:block; margin-bottom:2px;">[Ganti Akun]</button>
+            <div class="tier-pill" id="userTier">MEMBER REGULER</div>
+            <div class="saldo-display" id="userSaldoText">Rp 0</div>
+        </div>
+    </header>
+
+    <div class="store-closed-banner" id="storeClosedNotice">
+        🛑 TOKO SEDANG TUTUP SEMENTARA UNTUK PEMELIHARAAN SISTEM
+    </div>
+
+    <!-- BANNER INFO TOKO STICKY MENGIKUTI SCROLL -->
+    <div class="neon-announcement-bar" id="globalNoticeBox" style="display:none;">
+        <span class="neon-tag">📢 INFO TOKO</span>
+        <div class="announcement-marquee">
+            <span class="announcement-text" id="globalNotice">Server Aman Terkendali Normal 24 Jam. Silakan Top Up Sepuasnya di MStoreeebyAsrul!</span>
+        </div>
+    </div>
+
+    <!-- STICKY ORDER BANNER (REALTIME DENGAN AUTO-POLLING & IKUT SCROLL) -->
+    <div class="order-status-banner" id="activeOrderBanner">
+        <div class="order-status-header">
+            <span class="order-badge-pill" id="bannerBadgeStatus">MEMPROSES</span>
+            <small id="bannerCountdownText" style="color:var(--warning); font-weight:800;"></small>
+        </div>
+        <div style="font-size:12px; font-weight:800; color:#fff;" id="bannerProdTitle">-</div>
+        <div style="font-size:11px; color:var(--text-muted); margin-top:2px;" id="bannerTargetTitle">Tujuan: -</div>
+        <div style="font-size:14px; font-weight:900; color:var(--primary-cyan); margin-top:4px;" id="bannerTagihanText">Rp 0</div>
+        
+        <div id="bannerSnBox" style="display:none; background:#07090E; border:1px solid var(--success); padding:8px; border-radius:8px; margin-top:8px; font-size:11px; color:var(--success); word-break:break-all;">
+            <b>SN / Token:</b> <span id="bannerSnValue">-</span>
+        </div>
+
+        <div class="order-banner-actions" id="bannerActionButtons">
+            <button class="btn-order-action" id="btnBannerViewQris" style="background:var(--primary-cyan); color:#000;" onclick="bukaQrisDariBanner()">🔍 Buka Barcode QRIS</button>
+            <button class="btn-order-action" id="btnBannerCheckStatus" style="background:#242D45; color:#fff;" onclick="cekStatusPesananAktif(true)">🔄 Cek Status</button>
+            <button class="btn-order-action" id="btnBannerCancelOrder" style="background:rgba(255,51,102,0.15); border:1px solid var(--danger); color:var(--danger); grid-column:span 2;" onclick="batalkanPesananAktif()">❌ Batalkan Pesanan</button>
+        </div>
+
+        <button id="bannerBtnCloseSuccess" style="display:none; width:100%; margin-top:8px; background:#1B2234; border:1px solid var(--card-border); color:#fff; padding:8px; border-radius:8px; font-size:11px; font-weight:800; cursor:pointer;" onclick="tutupBannerSukses()">✕ Tutup Notifikasi Pesanan Selesai</button>
+    </div>
+
+    <div class="cutoff-banner" id="cutoffNotice">
+        🌙 <b>INFO CUT-OFF MALAM:</b> Sebagian provider sedang pemeliharaan rutin. Jika pesanan terkendala, saldo akun otomatis dikembalikan 100% saat itu juga.
+    </div>
+
+    <!-- 1. TAB BELANJA -->
+    <div class="tab-content active" id="tab-belanja">
+        
+        <div class="tier-switch-bar">
+            <button class="tier-tab-btn tier-reg active" onclick="setBelanjaTier('REGULER', this)">🛍️ Reguler</button>
+            <button class="tier-tab-btn tier-vip" onclick="setBelanjaTier('VIP', this)">👑 VIP Normal</button>
+            <button class="tier-tab-btn tier-super" onclick="setBelanjaTier('VIP_SUPER', this)">⚡ VIP Super</button>
+        </div>
+
+        <div class="vip-permanent-warning vip-warning-normal" id="vipWarningNormalBox">
+            👑 <b>KATALOG KHUSUS HARGA GROSIR (VIP NORMAL)</b><br>
+            Anda sedang melihat daftar harga modal agen termurah. Akun Anda saat ini berstatus <b>Member Reguler</b>. Capai 250 transaksi non-wallet bulan ini untuk perpanjangan gratis otomatis, atau klik tab <b>🛍️ Reguler</b> di atas untuk langsung belanja!
+        </div>
+
+        <div class="vip-permanent-warning vip-warning-super" id="vipWarningSuperBox">
+            ⚡ <b>KATALOG HARGA MODAL DISTRIBUTOR 0% (VIP SUPER)</b><br>
+            Katalog ini menampilkan harga modal server pusat murni tanpa markup 1 Rupiah pun. Silakan aktifkan langganan VIP Super (Rp 500rb/30 hari) pada tombol beli, atau beralih kembali ke tab <b>🛍️ Reguler</b> untuk bertransaksi normal.
+        </div>
+
+        <div class="marquee-container" id="tierMarqueeBox">
+            <div class="marquee-text" id="tierMarqueeText">...</div>
+        </div>
+
+        <div class="search-box-wrap">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="searchProductInput" class="search-input" placeholder="Cari nama produk / nominal (cth: Weekly, Dana, 1000)..." oninput="filterSearchProducts()">
+        </div>
+
+        <div id="categoryProviderSection">
+            <div class="section-title"><span>1.</span> Pilih Kategori Produk</div>
+            <div class="cat-scroll">
+                <button class="cat-btn active" onclick="setKategori('GAME', this)">🎮 Game</button>
+                <button class="cat-btn" onclick="setKategori('PULSA', this)">📱 Pulsa</button>
+                <button class="cat-btn" onclick="setKategori('DATA', this)">🌐 Data</button>
+                <button class="cat-btn" onclick="setKategori('WALLET', this)">💸 E-Wallet</button>
+                <button class="cat-btn" onclick="setKategori('PLN', this)">⚡ PLN</button>
+                <button class="cat-btn" onclick="setKategori('VOUCHER', this)">🎟️ Voucher</button>
+                <button class="cat-btn" onclick="setKategori('TELPON', this)">📞 Telpon</button>
+                <button class="cat-btn" onclick="setKategori('TV', this)">📺 TV Parabola</button>
+                <button class="cat-btn" onclick="setKategori('PASCA', this)">🧾 Tagihan Pasca</button>
+            </div>
+
+            <div class="section-title"><span>2.</span> Pilih Provider / Layanan</div>
+            <div class="service-scroll" id="serviceList"></div>
+
+            <div class="active-service-badge" id="activeServiceBadge">
+                <span class="neon-led led-purple" id="activeServiceLed"></span>
+                <span>Layanan: <b id="activeServiceNameText" style="color:#fff;">MOBILE LEGENDS</b></span>
+            </div>
+
+            <div class="sub-tabs" id="subTabsGame" style="display:none;">
+                <button class="sub-tab-btn active" onclick="setSubTab('REG', this)">💎 Diamond Reguler</button>
+                <button class="sub-tab-btn" onclick="setSubTab('PASS', this)">🎟️ Weekly Pass / Event</button>
+            </div>
+        </div>
+
+        <div class="section-title" id="titleInputTarget"><span>3.</span> Masukkan Data Akun</div>
+        <div class="input-card">
+            <input type="tel" id="targetNo" placeholder="User ID Game / Nomor HP" inputmode="numeric">
+            <input type="tel" id="targetZone" placeholder="Zone ID" style="display: none; max-width: 105px;" inputmode="numeric">
+        </div>
+
+        <div class="section-title" id="titleNominal"><span>4.</span> Pilih Nominal Produk</div>
+        <div class="sku-grid" id="productList">
+            <div style="grid-column: span 2; text-align: center; color: var(--text-muted); padding: 30px;">Memuat produk...</div>
+        </div>
+    </div>
+
+    <!-- 2. TAB DEPOSIT -->
+    <div class="tab-content" id="tab-deposit">
+        <div class="card-box">
+            <h3 style="font-size: 15px; margin-bottom: 8px;">💰 Isi Saldo Akun (QRIS Otomatis)</h3>
+            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">Pilih nominal cepat atau masukkan manual:</p>
+            <div class="denom-chips">
+                <div class="denom-chip" onclick="pilihDepoNominal(10000, this)">Rp 10.000</div>
+                <div class="denom-chip" onclick="pilihDepoNominal(20000, this)">Rp 20.000</div>
+                <div class="denom-chip" onclick="pilihDepoNominal(50000, this)">Rp 50.000</div>
+                <div class="denom-chip" onclick="pilihDepoNominal(100000, this)">Rp 100.000</div>
+                <div class="denom-chip" onclick="pilihDepoNominal(200000, this)">Rp 200.000</div>
+                <div class="denom-chip" onclick="pilihDepoNominal(500000, this)">Rp 500.000</div>
+            </div>
+            <input type="number" id="depoAmount" placeholder="Nominal Deposit (Min. 10.000)" style="width:100%; background:#07090E; border:1px solid var(--card-border); color:#fff; padding:12px; border-radius:10px; font-size:14px;">
+            <button class="btn-action" onclick="bukaModalDepoPin()">Tampilkan Barcode Pembayaran</button>
+        </div>
+    </div>
+
+    <!-- 3. TAB TARIK (WITHDRAW) -->
+    <div class="tab-content" id="tab-tarik">
+        <div class="card-box">
+            <div style="background:rgba(0,240,255,0.06); border:1px solid var(--card-border); border-radius:12px; padding:12px; margin-bottom:14px; text-align:center;">
+                <div style="font-size:11px; color:var(--text-muted); font-weight:700;">SALDO AKUN ANDA SAAT INI</div>
+                <div style="font-size:20px; font-weight:900; color:var(--primary-cyan); margin-top:3px;" id="wdSaldoDisplay">Rp 0</div>
+                <div style="font-size:10px; color:var(--text-muted); margin-top:2px;">(Dapat Ditarik Kapan Saja)</div>
+            </div>
+
+            <h3 style="font-size: 14px; margin-bottom: 8px;">🏧 Tarik Saldo ke E-Wallet</h3>
+            
+            <label style="font-size:11px; color:var(--text-muted); display:block; margin-bottom:4px; font-weight:700;">Pilih E-Wallet Tujuan:</label>
+            <select id="wdWallet" style="width:100%; background:#07090E; border:1px solid var(--card-border); color:#fff; padding:12px; border-radius:10px; font-size:13px; margin-bottom:12px;">
+                <option value="DANA">DANA</option>
+                <option value="GOPAY">GoPay</option>
+                <option value="SHOPEEPAY">ShopeePay</option>
+                <option value="OVO">OVO</option>
+            </select>
+
+            <label style="font-size:11px; color:var(--text-muted); display:block; margin-bottom:4px; font-weight:700;">Nomor E-Wallet Tujuan:</label>
+            <input type="tel" id="wdTarget" placeholder="Contoh: 08123456789" style="width:100%; background:#07090E; border:1px solid var(--card-border); color:#fff; padding:12px; border-radius:10px; font-size:13px; margin-bottom:14px;">
+
+            <label style="font-size:11px; color:var(--text-muted); display:block; margin-bottom:4px; font-weight:700;">Pilih Nominal Penarikan:</label>
+            <div class="denom-chips">
+                <div class="denom-chip" onclick="pilihWdNominal(10000, this)">10.000</div>
+                <div class="denom-chip" onclick="pilihWdNominal(20000, this)">20.000</div>
+                <div class="denom-chip" onclick="pilihWdNominal(25000, this)">25.000</div>
+                <div class="denom-chip" onclick="pilihWdNominal(50000, this)">50.000</div>
+                <div class="denom-chip" onclick="pilihWdNominal(100000, this)">100.000</div>
+                <div class="denom-chip" onclick="pilihWdNominal(200000, this)">200.000</div>
+            </div>
+
+            <div style="background:#07090E; border:1px solid var(--card-border); border-radius:10px; padding:10px 12px; font-size:12px; margin-top:8px;">
+                <div class="profile-row"><span class="profile-label">Nominal Ditarik:</span><span class="profile-val" id="wdRincianNominal">Rp 0</span></div>
+                <div class="profile-row"><span class="profile-label">Biaya Admin E-Wallet:</span><span class="profile-val" style="color:var(--warning)">Rp 520</span></div>
+                <div class="profile-row" style="border:none; padding-bottom:0;"><span class="profile-label">Total Saldo Terpotong:</span><span class="profile-val" id="wdRincianTotal" style="color:var(--primary-cyan); font-size:13px;">Rp 0</span></div>
+            </div>
+
+            <button class="btn-action" id="btnProsesWd" onclick="bukaModalWdPin()" disabled style="opacity:0.6;">Pilih Nominal Terlebih Dahulu</button>
+        </div>
+    </div>
+
+    <!-- 4. TAB AKUN -->
+    <div class="tab-content" id="tab-akun">
+        <div class="card-box">
+            <h3 style="font-size: 15px; margin-bottom: 12px; display:flex; align-items:center; gap:8px;">
+                <span>👤</span> Identitas Akun Pelanggan MStoreeebyAsrul
+            </h3>
+            <div class="profile-row"><span class="profile-label">Nama:</span><span class="profile-val" id="profNama">Pelanggan Setia</span></div>
+            <div class="profile-row"><span class="profile-label">Nomor WhatsApp:</span><span class="profile-val" id="profNomor">-</span></div>
+            <div class="profile-row"><span class="profile-label">Status Member:</span><span class="profile-val" id="profStatus" style="color:var(--primary-cyan)">Member Reguler</span></div>
+            <div class="profile-row"><span class="profile-label">Trx Non-Wallet Bulan Ini:</span><span class="profile-val" id="profMonthlyTrx" style="color:var(--gold-vip); font-weight:800;">0/250 (Menuju VIP)</span></div>
+            <div class="profile-row"><span class="profile-label">Total Belanja Seluruhnya:</span><span class="profile-val" id="profTrxCount">0 Kali</span></div>
+            <div class="profile-row"><span class="profile-label">Total Pengeluaran:</span><span class="profile-val" id="profTotalSpent">Rp 0</span></div>
+            <div class="profile-row"><span class="profile-label">Kode Referral:</span><span class="profile-val" id="profReffCode" style="color:#E0AAFF">-</span></div>
+        </div>
+
+        <div class="card-box" style="text-align: center;">
+            <h3 style="font-size: 15px; margin-bottom: 6px; display:flex; align-items:center; justify-content:center; gap:6px;">
+                <span>🔐</span> Keamanan PIN Transaksi
+            </h3>
+            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">Gunakan fitur ini untuk membuat atau mengubah PIN keamanan belanja akun Anda.</p>
+            <button class="btn-action" style="background:#242D45; color:#fff; font-size:13px; padding:11px;" onclick="bukaModalUbahPin()">🔐 Ubah PIN Transaksi</button>
+        </div>
+
+        <div class="card-box" style="text-align: center;">
+            <h3 style="font-size: 16px; margin-bottom: 6px;">🎰 Spin Hadiah Saldo</h3>
+            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">Sisa Tiket: <b id="tiketCount" style="color:var(--primary-cyan)">0</b> Tiket</p>
+            <button class="btn-action" onclick="putarSpin()">Putar Spin Hadiah</button>
+        </div>
+
+        <div class="card-box">
+            <h4 style="font-size: 14px; margin-bottom: 10px; display:flex; justify-content:space-between; align-items:center;">
+                <span>📝 Riwayat Transaksi Lengkap</span>
+                <small id="historyCount" style="color:var(--primary-cyan); font-weight:700;">0 Catatan</small>
+            </h4>
+            <div class="history-container" id="historyList">
+                <div style="text-align: center; color: var(--text-muted); padding: 20px;">Memuat riwayat...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 5. TAB ADMIN KHUSUS OWNER -->
+    <div class="tab-content" id="tab-admin">
+        <div class="card-box">
+            <h3 style="font-size: 16px; margin-bottom: 12px; color:var(--primary-cyan);">👑 DASHBOARD OWNER MStoreeebyAsrul</h3>
+            
+            <div class="stat-grid">
+                <div class="stat-card">
+                    <div style="font-size:11px; color:var(--text-muted);">Saldo Pusat Digiflazz</div>
+                    <div style="font-size:16px; font-weight:900; color:var(--success); margin-top:2px;" id="adminDigiBalanceText">Cek...</div>
+                </div>
+                <div class="stat-card">
+                    <div style="font-size:11px; color:var(--text-muted);">Laba Hari Ini</div>
+                    <div style="font-size:16px; font-weight:900; color:var(--primary-cyan); margin-top:2px;" id="adminCuanHariIni">Rp 0</div>
+                </div>
+                <div class="stat-card" style="border-color: rgba(157,78,221,0.45); background: rgba(157,78,221,0.06);">
+                    <div style="font-size:11px; color:#D8B4FE; font-weight:700;">Laba Bulan Ini</div>
+                    <div style="font-size:16px; font-weight:900; color:#E0AAFF; margin-top:2px;" id="adminCuanBulanIni">Rp 0</div>
+                </div>
+                <div class="stat-card">
+                    <div style="font-size:11px; color:var(--text-muted);">Transaksi Hari Ini</div>
+                    <div style="font-size:16px; font-weight:900; color:#fff; margin-top:2px;" id="adminTrxHariIni">0x</div>
+                </div>
+            </div>
+            
+            <div style="background:#07090E; border:1px solid var(--card-border); border-radius:10px; padding:12px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center;">
+                <div>
+                    <div style="font-size:12px; font-weight:800; color:#fff;">STATUS TOKO SAAT INI</div>
+                    <div style="font-size:11px; color:var(--text-muted);" id="adminStoreStatusLabel">Buka (Normal)</div>
+                </div>
+                <button class="btn-track-action" id="btnToggleStore" style="background:var(--danger); color:#fff; padding:8px 14px;" onclick="adminToggleStore()">Tutup Toko</button>
+            </div>
+
+            <button class="btn-track-action" style="width:100%; background:#242D45; color:#fff; margin-bottom:8px;" onclick="adminCheckDigiBalance()"><span id="adminRefreshIcon">🔄</span> Cek Sisa Saldo Digiflazz Sekarang</button>
+            <button class="btn-action" style="background:#1B2234; font-size:12px; padding:10px; margin-top:0; border:1px solid #242D45;" onclick="adminRefreshKatalog()">⚡ Muat Ulang Produk Digiflazz (Hapus Cache)</button>
+        </div>
+
+        <!-- FITUR RADAR PRODUK GANGGUAN / OFFLINE DI PANEL ADMIN -->
+        <div class="card-box">
+            <h4 style="font-size: 14px; margin-bottom: 6px; color:var(--danger); display:flex; justify-content:space-between; align-items:center;">
+                <span>🚨 Radar Produk Gangguan & Offline</span>
+                <small id="adminTroubledCount" style="color:#fff;">0 Item</small>
+            </h4>
+            <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 10px;">Daftar produk yang dimatikan seller, error dari pusat, atau modal melebihi saldo Digiflazz.</p>
+            <div class="member-table-wrap">
+                <table class="member-table">
+                    <thead>
+                        <tr>
+                            <th>SKU</th>
+                            <th>Nama Produk</th>
+                            <th>Modal</th>
+                            <th>Kendala</th>
+                        </tr>
+                    </thead>
+                    <tbody id="adminTroubledTableBody">
+                        <tr><td colspan="4" style="text-align:center; padding:12px; color:var(--text-muted);">Klik tombol di bawah untuk memindai produk gangguan.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <button class="btn-track-action" id="btnScanTroubled" style="width:100%; background:#1B2234; color:var(--danger); font-size:11px; padding:9px; margin-top:8px; border:1px solid var(--danger);" onclick="adminScanTroubledProducts()">🔍 Pindai Produk Gangguan Sekarang</button>
+        </div>
+
+        <!-- RIWAYAT HASIL SPIN MEMBER -->
+        <div class="card-box">
+            <h4 style="font-size: 14px; margin-bottom: 6px; color:var(--primary-cyan); display:flex; justify-content:space-between; align-items:center;">
+                <span>🎰 Riwayat Hadiah Spin Member</span>
+                <small id="adminSpinTotalCount" style="color:#fff;">0 Putaran</small>
+            </h4>
+            <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 10px;">Daftar klaim saldo dan hadiah dari mini game spin roda keberuntungan.</p>
+            <div class="member-table-wrap">
+                <table class="member-table">
+                    <thead>
+                        <tr>
+                            <th>Nomor HP</th>
+                            <th>Hadiah Didapat</th>
+                            <th>Nominal</th>
+                            <th>Waktu Spin</th>
+                        </tr>
+                    </thead>
+                    <tbody id="adminSpinTableBody">
+                        <tr><td colspan="4" style="text-align:center; padding:12px; color:var(--text-muted);">Belum ada riwayat spin.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- LIST PRODUK KEUNTUNGAN PRIORITAS 1 PER SKU -->
+        <div class="card-box">
+            <h4 style="font-size: 14px; margin-bottom: 6px; color:var(--primary-cyan); display:flex; justify-content:space-between; align-items:center;">
+                <span>⭐ Keuntungan Khusus Per SKU (Prioritas 1)</span>
+                <small id="adminSkuMarginCount" style="color:#fff;">0 SKU</small>
+            </h4>
+            <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 10px;">Daftar SKU yang memiliki untung terkunci & mengabaikan margin global.</p>
+            <div class="member-table-wrap">
+                <table class="member-table">
+                    <thead>
+                        <tr>
+                            <th>Key Margin</th>
+                            <th>Untung</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="adminSkuMarginTableBody">
+                        <tr><td colspan="3" style="text-align:center; padding:12px; color:var(--text-muted);">Belum ada margin khusus per SKU.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 10 PRODUK TERLARIS -->
+        <div class="card-box">
+            <h4 style="font-size: 14px; margin-bottom: 6px; color:var(--gold-vip);">🔥 10 Produk Terlaris (Top Sales)</h4>
+            <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 10px;">Produk digital dengan frekuensi pemesanan tertinggi di toko.</p>
+            <div class="member-table-wrap">
+                <table class="member-table">
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>Nama Produk</th>
+                            <th>Total Order</th>
+                            <th>Omset</th>
+                        </tr>
+                    </thead>
+                    <tbody id="adminTopProductsTableBody">
+                        <tr><td colspan="4" style="text-align:center; padding:12px; color:var(--text-muted);">Memuat produk terlaris...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 8 LIVE ANTREAN TRANSAKSI AKTIF -->
+        <div class="card-box">
+            <h4 style="font-size: 14px; margin-bottom: 6px; display:flex; justify-content:space-between; align-items:center;">
+                <span>⚡ Live Antrean Transaksi</span>
+                <small id="adminQueueCount" style="color:var(--primary-cyan)">0 Antrean</small>
+            </h4>
+            <div class="member-table-wrap">
+                <table class="member-table">
+                    <thead>
+                        <tr>
+                            <th>Resi</th>
+                            <th>Target</th>
+                            <th>Total</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="adminQueueTableBody">
+                        <tr><td colspan="4" style="text-align:center; padding:12px; color:var(--text-muted);">Tidak ada antrean tertunda.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- TOP 5 MEMBER SULTAN -->
+        <div class="card-box">
+            <h4 style="font-size: 14px; margin-bottom: 6px; color:var(--gold-vip);">🏆 Top 5 Member Sultan (Terbesar)</h4>
+            <div id="adminTopMembersList" style="font-size:12px;"></div>
+        </div>
+
+        <!-- REKAP LABA BULANAN (HISTORI 6 BULAN) -->
+        <div class="card-box">
+            <h4 style="font-size: 14px; margin-bottom: 6px; display:flex; align-items:center; gap:6px;">
+                <span>📈</span> Rekap Laba Bulanan (Histori 6 Bulan)
+            </h4>
+            <div id="adminMonthlyProfitList">
+                <div style="text-align: center; color: var(--text-muted); padding: 14px; font-size: 11px;">Memuat data laba bulanan...</div>
+            </div>
+        </div>
+
+        <!-- BROADCAST WHATSAPP MASSAL -->
+        <div class="card-box">
+            <h4 style="font-size: 14px; margin-bottom: 6px;">📢 Broadcast WhatsApp Massal</h4>
+            <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 8px;">Kirim pesan promo massal dengan jeda otomatis 2.5 detik anti-banned.</p>
+            <div class="admin-input-row">
+                <textarea id="adminBroadcastText" rows="3" placeholder="Ketik pesan promo massal di sini..."></textarea>
+            </div>
+            <button class="btn-action" style="background:linear-gradient(135deg, #00F0FF, #0072FF); color:#000; font-weight:900;" onclick="adminKirimBroadcast()">🚀 Kirim Broadcast Massal Sekarang</button>
+        </div>
+
+        <!-- PENGATURAN MARGIN BERTINGKAT -->
+        <div class="card-box">
+            <h4 style="font-size: 14px; margin-bottom: 6px;">📊 Margin Bertingkat (Rentang Modal)</h4>
+            <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 8px;">Untung otomatis berdasarkan modal pusat (cth: modal s/d 2000 untung 80, s/d 5000 untung 120).</p>
+            <div id="tierListDisplay" style="margin-bottom: 12px; font-size: 12px;"></div>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:6px; margin-bottom:8px;">
+                <div>
+                    <label style="font-size:11px; color:var(--text-muted); display:block; margin-bottom:3px;">Modal s/d (Rp):</label>
+                    <input type="number" id="tierMaxInput" placeholder="Contoh: 2000" style="width:100%; background:#07090E; border:1px solid var(--card-border); color:#fff; padding:8px 10px; border-radius:8px; font-size:12px;">
+                </div>
+                <div>
+                    <label style="font-size:11px; color:var(--text-muted); display:block; margin-bottom:3px;">Untung (Rp):</label>
+                    <input type="number" id="tierMarginInput" placeholder="Contoh: 80" style="width:100%; background:#07090E; border:1px solid var(--card-border); color:#fff; padding:8px 10px; border-radius:8px; font-size:12px;">
+                </div>
+            </div>
+            <div style="display:flex; gap:6px;">
+                <button class="btn-track-action" style="flex:1; background:var(--primary-cyan); color:#000;" onclick="adminTambahTier()">+ Tambah Tier</button>
+                <button class="btn-track-action" style="flex:1; background:linear-gradient(135deg, var(--accent-purple), #7928CA); color:#fff;" onclick="adminSimpanSemuaTier()">💾 Simpan Semua Tier</button>
+            </div>
+        </div>
+
+        <!-- ATUR UNTUNG GLOBAL & SKU -->
+        <div class="card-box">
+            <h4 style="font-size: 14px; margin-bottom: 10px;">📈 Atur Untung SKU & Global</h4>
+            <div class="admin-input-row">
+                <label>Untung Global Reguler (Rp):</label>
+                <div style="display:flex; gap:6px;">
+                    <input type="number" id="marginGlobalInput" placeholder="Contoh: 520">
+                    <button class="btn-track-action" style="background:var(--primary-cyan); color:#000; padding:6px 12px;" onclick="adminSimpanMargin('MARGIN_GLOBAL', document.getElementById('marginGlobalInput').value)">Simpan</button>
+                </div>
+            </div>
+            <div class="admin-input-row">
+                <label>Untung Global VIP Normal (Rp):</label>
+                <div style="display:flex; gap:6px;">
+                    <input type="number" id="marginResellerInput" placeholder="Contoh: 110">
+                    <button class="btn-track-action" style="background:var(--gold-vip); color:#000; padding:6px 12px;" onclick="adminSimpanMargin('MARGIN_RESELLER', document.getElementById('marginResellerInput').value)">Simpan</button>
+                </div>
+            </div>
+            <div class="admin-input-row" style="margin-top:14px; border-top:1px solid #242D45; padding-top:10px;">
+                <label>Untung Khusus 1 SKU Tertentu (Prioritas 1):</label>
+                <div style="display:flex; gap:6px; margin-bottom:6px;">
+                    <input type="text" id="skuKeyInput" placeholder="Kode SKU (contoh: DANA1)" style="text-transform:uppercase;">
+                    <input type="number" id="skuMarginInput" placeholder="Untung (Rp)">
+                </div>
+                <button class="btn-action" style="padding:10px; font-size:12px; margin-top:4px;" onclick="adminSimpanSkuMargin()">Simpan Untung SKU Reguler</button>
+                <button class="btn-action" style="padding:10px; font-size:12px; margin-top:6px; background:#242D45;" onclick="adminSimpanSkuMarginVip()">Simpan Untung SKU VIP Normal</button>
+            </div>
+        </div>
+
+        <!-- RESET PIN MEMBER -->
+        <div class="card-box">
+            <h4 style="font-size: 14px; margin-bottom: 6px;">🔐 Reset / Ubah PIN Member</h4>
+            <div class="admin-input-row">
+                <label>Nomor HP Member:</label>
+                <input type="tel" id="adminResetPinTarget" placeholder="08123456789">
+            </div>
+            <div class="admin-input-row">
+                <label>PIN Baru (4-6 Digit):</label>
+                <input type="number" id="adminResetPinValue" placeholder="123456">
+            </div>
+            <button class="btn-action" style="padding:10px; font-size:12px; margin-top:4px;" onclick="adminEksekusiResetPin()">Ubah PIN Member</button>
+        </div>
+
+        <!-- PASANG PENGUMUMAN TOKO -->
+        <div class="card-box">
+            <h4 style="font-size: 14px; margin-bottom: 6px;">📢 Pasang Pengumuman / Info Toko</h4>
+            <div class="admin-input-row">
+                <textarea id="adminAnnounceText" rows="2" placeholder="Contoh: Server normal 24 Jam! Top Up MLBB proses 1 detik."></textarea>
+            </div>
+            <button class="btn-action" style="padding:10px; font-size:12px; margin-top:4px;" onclick="adminSimpanPengumuman()">Tayangkan Pengumuman</button>
+        </div>
+
+        <!-- TAMBAH / KURANG SALDO -->
+        <div class="card-box">
+            <h4 style="font-size: 14px; margin-bottom: 6px;">💰 Tambah / Kurang Saldo Pelanggan</h4>
+            <div class="admin-input-row">
+                <label>Nomor HP Member (08xxx / 628xxx):</label>
+                <input type="tel" id="adminTargetNo" placeholder="08123456789">
+            </div>
+            <div class="admin-input-row">
+                <label>Nominal Saldo (Contoh: 50000 atau -50000):</label>
+                <input type="number" id="adminAmountNo" placeholder="50000 atau -50000">
+            </div>
+            <button class="btn-action" onclick="adminKirimSaldo()">Eksekusi Perubahan Saldo</button>
+        </div>
+
+        <!-- DAFTAR KUNJUNGAN TOKO -->
+        <div class="card-box">
+            <h4 style="font-size: 14px; margin-bottom: 6px; display:flex; justify-content:space-between; align-items:center;">
+                <span style="display:flex; align-items:center; gap:6px;"><span>👀</span> Daftar Kunjungan Toko</span>
+                <small id="adminVisitorTotalCount" style="color:var(--primary-cyan); font-weight:700;">0 Kunjungan</small>
+            </h4>
+            <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 10px;">Pembersihan otomatis setiap hari pukul 00:00 WIB.</p>
+            <div class="member-table-wrap">
+                <table class="member-table">
+                    <thead>
+                        <tr>
+                            <th>Nomor HP</th>
+                            <th>Nama</th>
+                            <th>Waktu Masuk</th>
+                        </tr>
+                    </thead>
+                    <tbody id="adminVisitorTableBody">
+                        <tr><td colspan="3" style="text-align:center; color:var(--text-muted); padding:16px;">Memuat data kunjungan...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <button class="btn-track-action" style="width:100%; background:#1B2234; color:#fff; font-size:11px; padding:9px; margin-top:8px; border:1px solid #242D45;" onclick="adminLoadVisitors()">🔄 Segarkan Data Pengunjung</button>
+        </div>
+
+        <!-- CADANGAN DATABASE & DAFTAR MEMBER -->
+        <div class="card-box">
+            <h4 style="font-size: 14px; margin-bottom: 6px; display:flex; align-items:center; gap:6px;">
+                <span>💾</span> Cadangan Database Toko
+            </h4>
+            <a href="/mstoreee.db" download="mstoreee.db" class="btn-action" style="display:flex; align-items:center; justify-content:center; gap:6px; text-decoration:none; padding:12px; font-size:12px; background:#1B2234; border:1px solid #242D45; margin-top:0;">
+                <span>📥</span> Unduh File Database (.db)
+            </a>
+        </div>
+
+        <div class="card-box">
+            <h4 style="font-size: 14px; margin-bottom: 6px; display:flex; justify-content:space-between; align-items:center;">
+                <span>👥 Database Seluruh Member</span>
+                <small id="adminMemberTotalCount" style="color:var(--primary-cyan)">0 User</small>
+            </h4>
+            <div class="member-table-wrap">
+                <table class="member-table">
+                    <thead>
+                        <tr>
+                            <th>Nomor</th>
+                            <th>Nama</th>
+                            <th>Saldo</th>
+                            <th>PIN</th>
+                            <th>Trx</th>
+                        </tr>
+                    </thead>
+                    <tbody id="adminMemberTableBody">
+                        <tr><td colspan="5" style="text-align:center; padding:16px;">Memuat data member...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- SMART FLOATING CS -->
+    <a href="https://wa.me/6281260007324?text=Halo%20Admin%20MStoreeebyAsrul,%20saya%20butuh%20bantuan" target="_blank" class="floating-wa-help" id="floatingWaBtn">
+        <span>💬</span> Bantuan CS
+    </a>
+
+    <!-- FLOATING ACTION BAR -->
+    <div class="floating-action-bar" id="floatingBar">
+        <div class="floating-inner">
+            <div class="floating-info">
+                <h4 id="floatProdName">Pilih Produk</h4>
+                <p id="floatProdPrice">Rp 0</p>
+            </div>
+            <button class="btn-float-pay" id="btnFloatBeli" onclick="bukaModalKonfirmasiData()">Beli Sekarang 🚀</button>
+        </div>
+    </div>
+
+    <!-- BOTTOM NAVIGATION -->
+    <nav class="bottom-nav">
+        <button class="nav-item active" onclick="gantiTab('tab-belanja', this)"><span>🛍️</span>Belanja</button>
+        <button class="nav-item" onclick="gantiTab('tab-deposit', this)"><span>💰</span>Deposit</button>
+        <button class="nav-item" onclick="gantiTab('tab-tarik', this)"><span>🏧</span>Tarik</button>
+        <button class="nav-item" onclick="gantiTab('tab-akun', this)"><span>👤</span>Akun</button>
+        <button class="nav-item" id="navItemAdmin" style="display:none;" onclick="gantiTab('tab-admin', this)"><span>⚙️</span>Admin</button>
+    </nav>
+
+    <!-- MODAL KHUSUS GANTI AKUN DILENGKAPI IDENTITAS TOKO RESMI (FOTO 3) -->
+    <div class="modal" id="modalGantiAkun" style="display:none; z-index:999;">
+        <div class="modal-content" style="border-color:var(--primary-cyan); position:relative;">
+            <span class="modal-close" onclick="tutupModalGantiAkun()">&times;</span>
+            <h2 class="brand-title" style="margin-bottom:2px;"><span class="neon-cyan">MStoreee</span><span class="neon-purple">byAsrul</span></h2>
+            <p style="font-size:10px; color:var(--text-muted); margin-bottom:12px;">Pusat Transaksi Digital & PPOB 24 Jam</p>
+            <div style="font-size:26px; margin-bottom:4px;">🔄</div>
+            <h3 style="font-size:15px; margin-bottom:4px; color:var(--primary-cyan);">Ganti Akun Pelanggan</h3>
+            <p style="font-size:11px; color:var(--text-muted); margin-bottom:14px;">Masukkan nomor WhatsApp dan PIN akun Anda yang lain:</p>
+            
+            <div class="admin-input-row">
+                <label>Nomor WhatsApp Akun Anda:</label>
+                <input type="tel" id="switchPhoneInput" placeholder="Contoh: 08123456789" style="text-align:center; font-weight:800; font-size:14px;">
+            </div>
+
+            <div class="admin-input-row">
+                <label>PIN Transaksi Akun:</label>
+                <input type="password" id="switchPinInput" class="pin-input-field" maxlength="6" placeholder="PIN Transaksi" inputmode="numeric">
+            </div>
+
+            <button class="btn-action" onclick="eksekusiGantiAkun()">Masuk ke Akun Ini 🚀</button>
+            <button onclick="tutupModalGantiAkun()" style="background:none; border:none; color:var(--text-muted); font-size:11px; cursor:pointer; margin-top:10px; display:block; width:100%; text-decoration:underline;">✕ Batal / Tetap di Akun Saat Ini</button>
+        </div>
+    </div>
+
+    <!-- SMART MODAL LINK POLOS: LOGIN ATAU DAFTAR -->
+    <div class="modal" id="guestAuthModal" style="display:none; z-index:999;">
+        <div class="modal-content" style="border-color:var(--primary-cyan); position:relative;">
+            <div style="font-size:30px; margin-bottom:4px;">🔐</div>
+            <h3 style="font-size:16px; margin-bottom:6px; color:var(--primary-cyan);">Selamat Datang di MStoreeebyAsrul!</h3>
+            
+            <div class="sub-tabs" style="margin: 10px 0;">
+                <button class="sub-tab-btn active" id="btnTabAuthLogin" onclick="switchAuthMode('LOGIN')">Masuk (Punya Akun)</button>
+                <button class="sub-tab-btn" id="btnTabAuthRegister" onclick="switchAuthMode('REGISTER')">Daftar Baru</button>
+            </div>
+
+            <div class="admin-input-row">
+                <label>Nomor WhatsApp Anda:</label>
+                <input type="tel" id="authPhoneInput" placeholder="Contoh: 08123456789" style="text-align:center; font-weight:800; font-size:14px;">
+            </div>
+
+            <div class="admin-input-row">
+                <label id="lblAuthPin">PIN Transaksi (4-6 Digit):</label>
+                <input type="password" id="authPinInput" class="pin-input-field" maxlength="6" placeholder="PIN Anda" inputmode="numeric">
+            </div>
+
+            <div class="admin-input-row" id="authConfirmPinRow" style="display:none;">
+                <label>Ulangi / Konfirmasi PIN:</label>
+                <input type="password" id="authPinConfirmInput" class="pin-input-field" maxlength="6" placeholder="Ulangi PIN" inputmode="numeric">
+            </div>
+
+            <button class="btn-action" id="btnAuthSubmit" onclick="eksekusiAuthSmart()">Masuk Toko Sekarang 🚀</button>
+        </div>
+    </div>
+
+    <!-- MODAL EDUKASI TIER & BELI VIP SUPER -->
+    <div class="modal" id="lockedVipModal">
+        <div class="modal-content" style="border-color:var(--gold-vip);" id="lockedVipContent">
+            <span class="modal-close" onclick="document.getElementById('lockedVipModal').style.display='none'">&times;</span>
+            <div style="font-size:32px; margin-bottom:4px;" id="lockedVipIcon">👑</div>
+            <h3 style="font-size:16px; margin-bottom:6px;" id="lockedVipTitle">Akses VIP Terkunci</h3>
+            <p style="font-size:12px; color:var(--text-muted); line-height:1.5; margin-bottom:16px;" id="lockedVipDesc">...</p>
+            <div id="lockedVipActionArea"></div>
+        </div>
+    </div>
+
+    <!-- MODAL KONFIRMASI DATA -->
+    <div class="modal" id="confirmDataModal">
+        <div class="modal-content" style="border-color:var(--accent-purple);">
+            <span class="modal-close" onclick="document.getElementById('confirmDataModal').style.display='none'">&times;</span>
+            <div style="font-size:28px; margin-bottom:4px;">📋</div>
+            <h3 style="font-size: 15px; margin-bottom: 4px;">Konfirmasi Data Pesanan</h3>
+            <div style="background:#07090E; border:1px solid var(--card-border); border-radius:12px; padding:12px; font-size:12px; text-align:left; margin-bottom:14px;">
+                <div class="profile-row"><span class="profile-label">Layanan:</span><span class="profile-val" id="confProdName">-</span></div>
+                <div class="profile-row"><span class="profile-label" id="confTargetLabel">Nomor / ID Tujuan:</span><span class="profile-val" style="color:var(--primary-cyan); font-weight:900;" id="confTargetVal">-</span></div>
+                <div class="profile-row" id="confPascaInfoRow" style="display:none;"><span class="profile-label">Nama Pelanggan:</span><span class="profile-val" id="confPascaCustName" style="color:var(--gold-vip);">-</span></div>
+                <div class="profile-row" style="border:none; padding-bottom:0;"><span class="profile-label">Total Tagihan:</span><span class="profile-val" style="color:var(--success); font-size:14px;" id="confProdPrice">Rp 0</span></div>
+            </div>
+            <button class="btn-action" onclick="lanjutKePembayaran()" style="margin-bottom:8px;">Lanjut Pembayaran ➡️</button>
+            <button onclick="document.getElementById('confirmDataModal').style.display='none'" style="background:none; border:none; color:var(--text-muted); font-size:11px; cursor:pointer;">Periksa Lagi</button>
+        </div>
+    </div>
+
+    <!-- MODAL PEMBAYARAN -->
+    <div class="modal" id="payModal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="tutupModal()">&times;</span>
+            <h3 style="font-size: 15px; margin-bottom: 6px;">Pilih Metode Pembayaran</h3>
+            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 14px;" id="modalOrderDesc"></p>
+            <button class="btn-action" onclick="klikBayarSaldo()" style="margin-bottom: 10px; display:flex; justify-content:space-between; align-items:center;">
+                <span>💰 Saldo Akun</span>
+                <span id="btnModalSaldoPrice" style="color:var(--primary-cyan); font-size:13px;">Rp 0</span>
+            </button>
+            <button class="btn-action" onclick="klikBayarQris()" style="background: linear-gradient(135deg, #00F0FF, #0072FF); color:#000; display:flex; justify-content:space-between; align-items:center;">
+                <span>⚡ Scan QRIS Instan</span>
+                <span id="btnModalQrisPrice" style="color:#000; font-weight:900; font-size:13px;">Rp 0</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- MODAL MASUKKAN PIN TRANSAKSI (WAJIB UNTUK SEMUA METODE) -->
+    <div class="modal" id="pinModal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="document.getElementById('pinModal').style.display='none'">&times;</span>
+            <h3 style="font-size: 16px; margin-bottom: 6px;" id="pinModalTitle">🔐 Masukkan PIN Transaksi</h3>
+            <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 14px;" id="pinModalDesc">PIN wajib dimasukkan untuk mengonfirmasi pesanan aman Anda.</p>
+            <div style="margin-bottom:12px;">
+                <input type="password" id="inputPinVal" class="pin-input-field" maxlength="6" placeholder="Masukkan PIN" inputmode="numeric">
+            </div>
+            <button class="btn-action" id="btnActionPin" onclick="eksekusiPinSubmit()">Konfirmasi PIN & Bayar</button>
+        </div>
+    </div>
+
+    <!-- MODAL UBAH PIN TRANSAKSI -->
+    <div class="modal" id="changePinModal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="document.getElementById('changePinModal').style.display='none'">&times;</span>
+            <h3 style="font-size: 16px; margin-bottom: 6px;">🔐 Ubah PIN Transaksi</h3>
+            <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 14px;">Masukkan PIN lama dan PIN baru Anda:</p>
+            
+            <div style="margin-bottom:10px; text-align:left;">
+                <label style="font-size:11px; color:var(--text-muted); display:block; margin-bottom:4px;">PIN Lama:</label>
+                <input type="password" id="inputOldPinVal" class="pin-input-field" maxlength="6" placeholder="PIN Lama" inputmode="numeric">
+            </div>
+
+            <div style="margin-bottom:10px; text-align:left;">
+                <label style="font-size:11px; color:var(--text-muted); display:block; margin-bottom:4px;">PIN Baru (4-6 Digit):</label>
+                <input type="password" id="inputNewPinVal" class="pin-input-field" maxlength="6" placeholder="PIN Baru" inputmode="numeric">
+            </div>
+
+            <div style="margin-bottom:14px; text-align:left;">
+                <label style="font-size:11px; color:var(--text-muted); display:block; margin-bottom:4px;">Ulangi PIN Baru:</label>
+                <input type="password" id="inputNewPinConfirmVal" class="pin-input-field" maxlength="6" placeholder="Konfirmasi PIN" inputmode="numeric">
+            </div>
+
+            <button class="btn-action" onclick="eksekusiUbahPin()">Simpan PIN Baru</button>
+        </div>
+    </div>
+
+    <!-- MODAL QRIS DILENGKAPI KATA-KATA EDUKASI SALAH TRANSFER -->
+    <div class="modal" id="qrisModal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="tutupModal()">&times;</span>
+            <h3 style="font-size: 15px;">Scan QRIS Untuk Bayar</h3>
+            <h2 style="font-size: 22px; color: var(--primary-cyan); margin: 6px 0;" id="qrisTagihan">Rp 0</h2>
+            <div style="font-size:11px; color:var(--warning); margin-bottom:4px;" id="qrisTimerNotice">⏳ Sisa Waktu Bayar: 05:00</div>
+            
+            <div class="qris-box" onclick="bukaGambarPenuh()">
+                <img id="qrisImg" src="/qris.jpg" alt="QRIS MStoreeebyAsrul">
+            </div>
+            
+            <div style="display:flex; justify-content:center; gap:8px; margin-bottom:8px;">
+                <a id="btnDownloadQris" href="/qris.jpg" download="QRIS_MSTOREEEBYASRUL.jpg" style="background:#141926; border:1px solid var(--primary-cyan); color:var(--primary-cyan); padding:8px 12px; border-radius:8px; font-size:11px; font-weight:700; text-decoration:none;">📥 Simpan Barcode</a>
+                <button onclick="tutupModal()" style="background:#242D45; border:none; color:#fff; padding:8px 14px; border-radius:8px; font-size:11px; font-weight:700; cursor:pointer;">Selesai / Tutup</button>
+            </div>
+
+            <div style="background:rgba(255,179,0,0.08); border:1px solid rgba(255,179,0,0.3); border-radius:10px; padding:10px; text-align:left; font-size:11px; line-height:1.45; color:#FFE082;">
+                <b style="color:var(--warning); display:block; margin-bottom:4px;">💡 PENTING: KEAMANAN PEMBAYARAN OTOMATIS</b>
+                • Harap transfer <b>harus pas persis sampai 3 digit angka terakhir</b> agar pesanan Kakak diproses otomatis dalam hitungan detik.<br>
+                • Salah nominal transfer atau bayar melewati batas 5 menit? <b>Tenang, dana Kakak 100% aman!</b> Sistem otomatis memasukkan seluruh uang tersebut ke <b>Saldo Akun MStoreeebyAsrul</b> Kakak setelah waktu habis.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        let userNomor = urlParams.get('nomor') || localStorage.getItem('mstoreee_user_nomor') || '';
+        let userNama = urlParams.get('nama') || localStorage.getItem('mstoreee_user_nama') || 'Pelanggan Setia';
+
+        let isAdminUser = (userNomor === '6281260007324');
+
+        let allProducts = [], curKategori = 'GAME', curService = '', curSubTab = 'REG', selectedProduct = null, currentUserSaldo = 0;
+        let activeBelanjaTier = 'REGULER';
+        let userIsReseller = false;
+        let userIsVipSuper = false;
+        let userMonthlyTrx = 0;
+        let adminTiers = [];
+        let selectedWdNominal = 0;
+        let currentStoreStatus = 'OPEN';
+        let userHasPin = false;
+        let verifiedPinSession = '';
+        let pinActionType = 'CHECKOUT';
+        let pendingCheckoutMetode = 'SALDO';
+
+        let curAuthMode = 'LOGIN';
+        let activeOrderData = null;
+        let orderCountdownInterval = null;
+        let pollingInterval = null;
+        let inquiryResultPasca = null;
+
+        function setBelanjaTier(tier, btn) {
+            activeBelanjaTier = tier;
+            document.querySelectorAll('.tier-tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            const mBox = document.getElementById('tierMarqueeBox');
+            const mText = document.getElementById('tierMarqueeText');
+            const led = document.getElementById('activeServiceLed');
+
+            const warnNormal = document.getElementById('vipWarningNormalBox');
+            const warnSuper = document.getElementById('vipWarningSuperBox');
+
+            if (tier === 'VIP') {
+                warnNormal.style.display = userIsReseller ? 'none' : 'block';
+                warnSuper.style.display = 'none';
+
+                mBox.style.display = 'block';
+                mBox.style.borderColor = 'var(--gold-vip)';
+                mBox.style.background = 'rgba(255, 215, 0, 0.08)';
+                mText.style.color = '#FFE082';
+                mText.innerText = '👑 TIER VIP NORMAL: Nikmati harga grosir termurah! Cukup capai 250 transaksi non-wallet per bulan untuk perpanjangan otomatis tanpa biaya!';
+                led.className = 'neon-led led-gold';
+            } else if (tier === 'VIP_SUPER') {
+                warnNormal.style.display = 'none';
+                warnSuper.style.display = userIsVipSuper ? 'none' : 'block';
+
+                mBox.style.display = 'block';
+                mBox.style.borderColor = 'var(--ruby-super)';
+                mBox.style.background = 'rgba(255, 0, 122, 0.1)';
+                mText.style.color = '#FF80AB';
+                mText.innerText = '⚡ TIER VIP SUPER: Belanja langsung dengan harga modal server pusat distributor utama tanpa markup 1 Rupiah pun! Hemat jutaan sebulan.';
+                led.className = 'neon-led led-ruby';
+            } else {
+                warnNormal.style.display = 'none';
+                warnSuper.style.display = 'none';
+                mBox.style.display = 'none';
+                led.className = 'neon-led led-purple';
+            }
+
+            renderProducts();
+        }
+
+        function filterSearchProducts() {
+            const query = (document.getElementById('searchProductInput').value || '').trim();
+            const catSection = document.getElementById('categoryProviderSection');
+            if (query.length > 0) {
+                catSection.style.display = 'none';
+            } else {
+                catSection.style.display = 'block';
+            }
+            renderProducts();
+        }
+
+        function gantiTab(tabId, btn) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            btn.classList.add('active');
+            if (tabId !== 'tab-belanja') {
+                document.getElementById('floatingBar').style.display = 'none';
+                document.getElementById('floatingWaBtn').classList.remove('shifted');
+            } else if (selectedProduct) {
+                document.getElementById('floatingBar').style.display = 'block';
+                document.getElementById('floatingWaBtn').classList.add('shifted');
+            }
+
+            if (tabId === 'tab-admin' && isAdminUser) {
+                adminLoadSettings();
+                adminLoadVisitors();
+                adminLoadAllMembers();
+            }
+        }
+
+        function bukaModalGantiAkun() {
+            document.getElementById('switchPhoneInput').value = '';
+            document.getElementById('switchPinInput').value = '';
+            document.getElementById('modalGantiAkun').style.display = 'flex';
+        }
+
+        function tutupModalGantiAkun() {
+            document.getElementById('modalGantiAkun').style.display = 'none';
+        }
+
+        async function eksekusiGantiAkun() {
+            let val = document.getElementById('switchPhoneInput').value.trim();
+            let pVal = document.getElementById('switchPinInput').value.trim();
+            let clean = val.replace(/[^0-9]/g, '');
+            if (clean.length < 9) return alert('Masukkan nomor WhatsApp yang benar!');
+            if (clean.startsWith('0')) clean = '62' + clean.substring(1);
+            else if (clean.startsWith('8')) clean = '62' + clean;
+
+            if (!/^\d{4,6}$/.test(pVal)) return alert('PIN harus 4-6 digit angka!');
+
+            try {
+                const vRes = await fetch('/api/user/verify-pin', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ nomor: clean, pin: pVal })
+                });
+                const vData = await vRes.json();
+                if (!vData.success) return alert('❌ ' + (vData.error || 'Nomor atau PIN salah!'));
+
+                const uRes = await fetch(`/api/user-info?nomor=${clean}`);
+                const uData = await uRes.json();
+
+                localStorage.setItem('mstoreee_user_nomor', clean);
+                localStorage.setItem('mstoreee_user_nama', uData.nama || 'Pelanggan Setia');
+                userNomor = clean;
+                userNama = uData.nama || 'Pelanggan Setia';
+                isAdminUser = (userNomor === '6281260007324');
+                verifiedPinSession = pVal;
+
+                document.getElementById('modalGantiAkun').style.display = 'none';
+                alert('✅ Berhasil beralih ke akun: ' + clean);
+                init();
+            } catch(e) { alert('Gagal berganti akun.'); }
+        }
+
+        function switchAuthMode(mode) {
+            curAuthMode = mode;
+            const btnLogin = document.getElementById('btnTabAuthLogin');
+            const btnReg = document.getElementById('btnTabAuthRegister');
+            const rowConfirm = document.getElementById('authConfirmPinRow');
+            const lblPin = document.getElementById('lblAuthPin');
+            const btnSubmit = document.getElementById('btnAuthSubmit');
+
+            if (mode === 'LOGIN') {
+                btnLogin.classList.add('active');
+                btnReg.classList.remove('active');
+                rowConfirm.style.display = 'none';
+                lblPin.innerText = 'PIN Transaksi:';
+                btnSubmit.innerText = 'Masuk ke Akun 🚀';
+            } else {
+                btnReg.classList.add('active');
+                btnLogin.classList.remove('active');
+                rowConfirm.style.display = 'block';
+                lblPin.innerText = 'Buat PIN Baru (4-6 Digit):';
+                btnSubmit.innerText = 'Daftar Akun Baru 🚀';
+            }
+        }
+
+        async function eksekusiAuthSmart() {
+            let val = document.getElementById('authPhoneInput').value.trim();
+            let pVal = document.getElementById('authPinInput').value.trim();
+            let pConfirm = document.getElementById('authPinConfirmInput').value.trim();
+
+            let clean = val.replace(/[^0-9]/g, '');
+            if (clean.length < 9) return alert('Masukkan nomor WhatsApp minimal 10 digit!');
+            if (clean.startsWith('0')) clean = '62' + clean.substring(1);
+            else if (clean.startsWith('8')) clean = '62' + clean;
+
+            if (!/^\d{4,6}$/.test(pVal)) return alert('PIN harus berupa 4-6 digit angka!');
+
+            if (curAuthMode === 'LOGIN') {
+                try {
+                    const vRes = await fetch('/api/user/verify-pin', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ nomor: clean, pin: pVal })
+                    });
+                    const vData = await vRes.json();
+                    if (!vData.success) return alert('❌ ' + (vData.error || 'Nomor atau PIN salah!'));
+
+                    localStorage.setItem('mstoreee_user_nomor', clean);
+                    userNomor = clean;
+                    isAdminUser = (userNomor === '6281260007324');
+                    verifiedPinSession = pVal;
+                    document.getElementById('guestAuthModal').style.display = 'none';
+                    init();
+                } catch(e) { alert('Gagal terhubung ke server.'); }
+            } else {
+                if (pVal !== pConfirm) return alert('Konfirmasi PIN tidak cocok!');
+                try {
+                    const regRes = await fetch('/api/user/set-pin', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ nomor: clean, pin: pVal })
+                    });
+                    const regData = await regRes.json();
+                    if (!regData.success) return alert('⚠️ ' + regData.error);
+
+                    localStorage.setItem('mstoreee_user_nomor', clean);
+                    userNomor = clean;
+                    isAdminUser = (userNomor === '6281260007324');
+                    verifiedPinSession = pVal;
+                    document.getElementById('guestAuthModal').style.display = 'none';
+                    alert('🎉 Pendaftaran berhasil! Selamat berbelanja di MStoreeebyAsrul.');
+                    init();
+                } catch(e) { alert('Gagal mendaftar.'); }
+            }
+        }
+
+        async function init() {
+            if (!userNomor) {
+                document.getElementById('guestAuthModal').style.display = 'flex';
+                return;
+            }
+
+            const navAdmin = document.getElementById('navItemAdmin');
+            if (isAdminUser) {
+                navAdmin.style.display = 'flex';
+                adminLoadSettings();
+                adminLoadVisitors();
+                adminLoadAllMembers();
+            } else {
+                navAdmin.style.display = 'none';
+            }
+
+            try {
+                const uRes = await fetch(`/api/user-info?nomor=${userNomor}`);
+                const uData = await uRes.json();
+                currentUserSaldo = uData.saldo || 0;
+                userHasPin = uData.hasPin;
+                userIsReseller = Boolean(uData.isReseller);
+                userIsVipSuper = Boolean(uData.isVipSuper);
+                userMonthlyTrx = uData.monthlyTrx || 0;
+                userNama = uData.nama || userNama || 'Pelanggan Setia';
+
+                document.getElementById('profNama').innerText = userNama;
+                document.getElementById('profNomor').innerText = userNomor;
+                document.getElementById('profReffCode').innerText = 'REF-' + userNomor;
+                document.getElementById('userSaldoText').innerText = 'Rp ' + Number(currentUserSaldo).toLocaleString('id-ID');
+                document.getElementById('wdSaldoDisplay').innerText = 'Rp ' + Number(currentUserSaldo).toLocaleString('id-ID');
+                document.getElementById('tiketCount').innerText = uData.freeSpin || 0;
+                document.getElementById('profMonthlyTrx').innerText = `${userMonthlyTrx}/250 (Non-Wallet)`;
+                document.getElementById('profTrxCount').innerText = `${uData.trxCount || 0} Transaksi`;
+                document.getElementById('profTotalSpent').innerText = 'Rp ' + Number(uData.totalSpent || 0).toLocaleString('id-ID');
+
+                if (uData.announcement) {
+                    document.getElementById('globalNotice').innerText = uData.announcement;
+                    document.getElementById('globalNoticeBox').style.display = 'flex';
+                }
+
+                if (userIsVipSuper) {
+                    document.getElementById('userTier').innerText = 'VIP SUPER (0%) ⚡';
+                    document.getElementById('userTier').style.borderColor = 'var(--ruby-super)';
+                    document.getElementById('userTier').style.color = '#FF80AB';
+                } else if (userIsReseller) {
+                    document.getElementById('userTier').innerText = 'RESELLER VIP 👑';
+                    document.getElementById('userTier').style.borderColor = 'var(--gold-vip)';
+                    document.getElementById('userTier').style.color = '#FFE082';
+                } else {
+                    document.getElementById('userTier').innerText = 'MEMBER REGULER';
+                    document.getElementById('userTier').style.borderColor = 'var(--accent-purple)';
+                    document.getElementById('userTier').style.color = '#D8B4FE';
+                }
+
+                let histHtml = '';
+                if(uData.history && uData.history.length > 0) {
+                    document.getElementById('historyCount').innerText = `${uData.history.length} Catatan`;
+                    uData.history.forEach(h => {
+                        let isDepo = (h.sku || '').includes('DEPOSIT');
+                        let sign = isDepo ? '+' : '-';
+                        histHtml += `
+                            <div class="history-card">
+                                <div class="history-left">
+                                    <h5>${h.sku}</h5>
+                                    <p>Tujuan: ${h.target}</p>
+                                    <p>${h.tanggal}</p>
+                                </div>
+                                <div class="history-right">
+                                    <div class="history-price" style="color:${isDepo ? 'var(--success)' : 'var(--primary-cyan)'}">${sign} Rp ${Number(h.harga).toLocaleString('id-ID')}</div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                } else {
+                    histHtml = '<div style="text-align: center; color: var(--text-muted); padding: 30px;">Belum ada riwayat transaksi.</div>';
+                }
+                document.getElementById('historyList').innerHTML = histHtml;
+            } catch (e) {}
+
+            muatOrderAktifDariLocal();
+            await muatKatalogProduk();
+        }
+
+        async function muatKatalogProduk() {
+            try {
+                const pRes = await fetch(`/api/products?nomor=${userNomor}`);
+                const pData = await pRes.json();
+                if (pData.success && Array.isArray(pData.products)) {
+                    allProducts = pData.products;
+                    setKategori(curKategori || 'GAME', document.querySelector('.cat-btn.active') || document.querySelector('.cat-btn'));
+                }
+            } catch (e) {}
+        }
+
+        function setKategori(kat, btn) {
+            curKategori = kat;
+            document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+            if (btn) btn.classList.add('active');
+            const sContainer = document.getElementById('serviceList');
+            sContainer.innerHTML = '';
+
+            let brands = [];
+            if (kat === 'GAME') {
+                brands = ['MOBILE LEGENDS', 'FREE FIRE', 'PUBG MOBILE', 'POINT BLANK', 'VALORANT', 'GENSHIN IMPACT', 'GARENA', 'STUMBLE GUYS', 'SUPER SUS', 'CALL OF DUTY', 'AOV', 'ROBLOX'];
+            } else if (kat === 'PULSA' || kat === 'DATA' || kat === 'TELPON') {
+                brands = ['TELKOMSEL', 'INDOSAT', 'AXIS', 'SMARTFREN', 'TRI', 'XL', 'BY.U'];
+            } else if (kat === 'WALLET') {
+                brands = ['DANA', 'GOPAY', 'OVO', 'SHOPEEPAY', 'LINKAJA'];
+            } else if (kat === 'PLN') {
+                brands = ['TOKEN LISTRIK'];
+            } else if (kat === 'TV') {
+                brands = ['NEX PARABOLA', 'K-VISION', 'DECODER GOL', 'TRANSVISION', 'MATRIX GARUDA', 'KAWAN KVISION', 'JAWARA VISION', 'TANAKA'];
+            } else if (kat === 'VOUCHER') {
+                brands = ['GOOGLE PLAY', 'STEAM WALLET', 'GARENA', 'RAZER GOLD', 'SPOTIFY', 'PLAYSTATION', 'WIFI ID', 'ALFAMART', 'INDOMARET', 'UNIPIN', 'VIDIO'];
+            } else if (kat === 'PASCA') {
+                brands = ['PLN PASCABAYAR', 'PDAM', 'BPJS KESEHATAN', 'HP PASCABAYAR', 'INTERNET PASCABAYAR', 'MULTIFINANCE'];
+            }
+
+            brands.forEach((brand, idx) => {
+                const bPill = document.createElement('button');
+                bPill.className = 'service-pill' + (idx === 0 ? ' active' : '');
+                bPill.innerText = brand;
+                bPill.onclick = () => setService(brand, bPill);
+                sContainer.appendChild(bPill);
+            });
+            if (brands.length > 0) setService(brands[0], sContainer.children[0]);
+        }
+
+        function setService(service, pill) {
+            curService = service;
+            document.querySelectorAll('.service-pill').forEach(p => p.classList.remove('active'));
+            if (pill) pill.classList.add('active');
+
+            document.getElementById('activeServiceNameText').innerText = service;
+
+            const zone = document.getElementById('targetZone');
+            const target = document.getElementById('targetNo');
+            const subTabs = document.getElementById('subTabsGame');
+
+            if (service === 'MOBILE LEGENDS') {
+                zone.style.display = 'block';
+                subTabs.style.display = 'flex';
+                target.placeholder = 'User ID Game';
+            } else {
+                zone.style.display = 'none';
+                subTabs.style.display = 'none';
+                if (curKategori === 'GAME') target.placeholder = `User ID ${service}`;
+                else if (curKategori === 'PLN') target.placeholder = 'Nomor Meter / IDPEL Listrik';
+                else if (curKategori === 'PASCA') target.placeholder = `Nomor Pelanggan / IDPEL ${service}`;
+                else target.placeholder = 'Nomor HP Tujuan (08xx)';
+            }
+            renderProducts();
+        }
+
+        function setSubTab(tab, btn) {
+            curSubTab = tab;
+            document.querySelectorAll('.sub-tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            renderProducts();
+        }
+
+        function renderProducts() {
+            const list = document.getElementById('productList');
+            list.innerHTML = '';
+            selectedProduct = null;
+            inquiryResultPasca = null;
+            document.getElementById('floatingBar').style.display = 'none';
+            document.getElementById('floatingWaBtn').classList.remove('shifted');
+
+            const querySearch = (document.getElementById('searchProductInput').value || '').toUpperCase().trim();
+            const cleanStr = s => (s || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+            const targetServiceClean = cleanStr(curService);
+
+            if (curKategori === 'PASCA') {
+                const pascaCard = document.createElement('div');
+                pascaCard.className = 'sku-card active';
+                pascaCard.style.gridColumn = 'span 2';
+                pascaCard.innerHTML = `
+                    <div class="sku-name" style="font-size:14px; margin-bottom:4px;">🧾 CEK TAGIHAN ${curService}</div>
+                    <p style="font-size:11px; color:var(--text-muted); margin-bottom:10px;">Masukkan Nomor Pelanggan / IDPEL di atas, lalu tekan tombol periksa tagihan di bawah.</p>
+                    <div id="inquiryResultBox" style="display:none; background:#07090E; border:1px solid var(--primary-cyan); padding:10px; border-radius:10px; margin-bottom:10px; text-align:left; font-size:11.5px;">
+                        <div class="profile-row"><span class="profile-label">Nama Pelanggan:</span><span class="profile-val" id="inqCustName" style="color:var(--gold-vip);">-</span></div>
+                        <div class="profile-row"><span class="profile-label">Tagihan Pokok:</span><span class="profile-val" id="inqPokok">-</span></div>
+                        <div class="profile-row"><span class="profile-label">Biaya Admin:</span><span class="profile-val" style="color:var(--warning);">Rp 1.500</span></div>
+                        <div class="profile-row" style="border:none;"><span class="profile-label">Total Harus Dibayar:</span><span class="profile-val" id="inqTotalBayar" style="color:var(--success); font-size:13px;">-</span></div>
+                    </div>
+                    <button class="btn-action" id="btnCekTagihanPasca" style="margin-top:0; padding:11px; font-size:12px;" onclick="eksekusiInquiryPasca()">🔍 Periksa Tagihan Sekarang</button>
+                `;
+                list.appendChild(pascaCard);
+                return;
+            }
+
+            let filtered = allProducts.filter(p => {
+                let bClean = cleanStr(p.brand);
+                let nClean = cleanStr(p.nama);
+                let katClean = cleanStr(p.kategori);
+
+                if (querySearch.length > 0) {
+                    return nClean.includes(cleanStr(querySearch)) || bClean.includes(cleanStr(querySearch));
+                }
+
+                if (curKategori === 'PLN') return (bClean.includes('PLN') || nClean.includes('PLN')) && !nClean.includes('PASCA');
+                if (curKategori === 'WALLET') {
+                    if (nClean.includes('PERDANA')) return false;
+                    return bClean.includes(targetServiceClean) || nClean.includes(targetServiceClean) || (katClean === 'WALLET' && nClean.includes(targetServiceClean));
+                }
+
+                if (curKategori === 'DATA') return (bClean.includes(targetServiceClean) || targetServiceClean.includes(bClean)) && katClean.includes('DATA');
+                if (curKategori === 'PULSA') return (bClean.includes(targetServiceClean) || targetServiceClean.includes(bClean)) && katClean.includes('PULSA');
+
+                if (curService === 'MOBILE LEGENDS') {
+                    let matchBrand = bClean.includes('MOBILELEGEND') || nClean.includes('MOBILELEGEND');
+                    if (curSubTab === 'PASS') return matchBrand && p.isPass;
+                    else return matchBrand && !p.isPass;
+                }
+
+                return bClean.includes(targetServiceClean) || targetServiceClean.includes(bClean) || nClean.includes(targetServiceClean);
+            });
+
+            if (filtered.length === 0) {
+                list.innerHTML = '<div style="grid-column: span 2; text-align: center; color: var(--text-muted); padding: 30px;">Produk tidak ditemukan atau belum tersedia di server pusat.</div>';
+                return;
+            }
+
+            filtered.forEach(p => {
+                let displayedPrice = p.hargaReguler;
+                let priceColor = 'var(--primary-cyan)';
+                if (activeBelanjaTier === 'VIP') {
+                    displayedPrice = p.hargaVip;
+                    priceColor = 'var(--gold-vip)';
+                } else if (activeBelanjaTier === 'VIP_SUPER') {
+                    displayedPrice = p.hargaSuper;
+                    priceColor = 'var(--ruby-super)';
+                }
+
+                const card = document.createElement('div');
+                card.className = 'sku-card' + (p.isActive ? '' : ' disabled');
+
+                // LABEL TERSISTEM: MENGGUNAKAN KATA GANGGUAN BUKAN SALDO KURANG (TERLINDUNGI)
+                let badgeStatusHtml = p.isActive 
+                    ? `<span class="sku-badge-status" style="background:rgba(0,230,118,0.15); color:var(--success);">⚡ Ready</span>`
+                    : `<span class="sku-badge-status" style="background:rgba(255,51,102,0.15); color:var(--danger);">⚠️ Gangguan</span>`;
+
+                card.innerHTML = `
+                    <div class="sku-name">${p.nama}</div>
+                    <div>
+                        <div class="sku-price" style="color:${priceColor};">Rp ${Number(displayedPrice).toLocaleString('id-ID')}</div>
+                        ${badgeStatusHtml}
+                    </div>
+                `;
+
+                card.onclick = () => {
+                    if (!p.isActive) return alert('⏳ Layanan ini sedang mengalami kendala sementara dari pihak penyedia.');
+
+                    document.querySelectorAll('.sku-card').forEach(c => c.classList.remove('active'));
+                    card.classList.add('active');
+                    selectedProduct = Object.assign({}, p, { currentPrice: displayedPrice });
+
+                    document.getElementById('floatProdName').innerText = p.nama;
+                    document.getElementById('floatProdPrice').innerText = `Rp ${Number(displayedPrice).toLocaleString('id-ID')}`;
+
+                    const btnBeli = document.getElementById('btnFloatBeli');
+                    if (currentStoreStatus === 'CLOSED') {
+                        btnBeli.innerText = 'Toko Tutup Sementara 🛑';
+                        btnBeli.style.background = '#4A5568';
+                    } else if (activeBelanjaTier === 'VIP' && !userIsReseller) {
+                        btnBeli.innerText = '🔒 Buka Akses VIP (Info)';
+                        btnBeli.style.background = 'linear-gradient(135deg, #FFB300, #FF8C00)';
+                    } else if (activeBelanjaTier === 'VIP_SUPER' && !userIsVipSuper) {
+                        btnBeli.innerText = '🔒 Buka Akses VIP Super (0%)';
+                        btnBeli.style.background = 'linear-gradient(135deg, var(--ruby-super), #7928CA)';
+                    } else {
+                        btnBeli.innerText = 'Beli Sekarang 🚀';
+                        btnBeli.style.background = 'linear-gradient(135deg, var(--accent-purple), #7928CA)';
+                    }
+
+                    document.getElementById('floatingBar').style.display = 'block';
+                    document.getElementById('floatingWaBtn').classList.add('shifted');
+                };
+                list.appendChild(card);
+            });
+        }
+
+        async function eksekusiInquiryPasca() {
+            const targetNo = document.getElementById('targetNo').value.trim();
+            if (!targetNo || targetNo.length < 6) return alert('Masukkan Nomor Pelanggan / IDPEL dengan benar!');
+
+            const btn = document.getElementById('btnCekTagihanPasca');
+            btn.innerText = 'Memeriksa Tagihan ke Server Pusat... ⏳';
+            btn.disabled = true;
+
+            try {
+                const res = await fetch('/api/inquiry-pasca', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        nomor: userNomor,
+                        serviceName: curService,
+                        customerNo: targetNo
+                    })
+                });
+                const d = await res.json();
+                if (!d.success) return alert('❌ ' + (d.error || 'Gagal mengecek tagihan.'));
+
+                inquiryResultPasca = d.data;
+                const totalTagihanFinal = d.data.totalTagihan;
+
+                document.getElementById('inqCustName').innerText = d.data.namaPelanggan || '-';
+                document.getElementById('inqPokok').innerText = 'Rp ' + Number(d.data.tagihanPokok).toLocaleString('id-ID');
+                document.getElementById('inqTotalBayar').innerText = 'Rp ' + Number(totalTagihanFinal).toLocaleString('id-ID');
+                document.getElementById('inquiryResultBox').style.display = 'block';
+
+                selectedProduct = {
+                    sku: d.data.buyerSkuCode,
+                    nama: `TAGIHAN ${curService}`,
+                    currentPrice: totalTagihanFinal,
+                    isPasca: true,
+                    refIdInq: d.data.refId,
+                    customerName: d.data.namaPelanggan
+                };
+
+                document.getElementById('floatProdName').innerText = `Tagihan ${curService}`;
+                document.getElementById('floatProdPrice').innerText = `Rp ${Number(totalTagihanFinal).toLocaleString('id-ID')}`;
+                
+                const btnBeli = document.getElementById('btnFloatBeli');
+                btnBeli.innerText = `Bayar Tagihan (Rp ${Number(totalTagihanFinal).toLocaleString('id-ID')}) 🚀`;
+                document.getElementById('floatingBar').style.display = 'block';
+                document.getElementById('floatingWaBtn').classList.add('shifted');
+
+                btn.innerText = '✅ Tagihan Ditemukan! Klik Beli di Bawah';
+            } catch(e) { alert('Gagal menghubungi server.'); }
+            finally { btn.disabled = false; }
+        }
+
+        function validasiInputDinamis() {
+            const target = document.getElementById('targetNo').value.trim();
+            const zone = document.getElementById('targetZone').value.trim();
+
+            if (curService === 'MOBILE LEGENDS') {
+                if (!target || !zone || !/^\d{5,11}$/.test(target) || !/^\d{3,5}$/.test(zone)) {
+                    alert('Harap masukkan User ID dan Zone ID Mobile Legends berupa angka!');
+                    return false;
+                }
+                return `${target}${zone}`;
+            }
+
+            if (!target) {
+                alert('Silakan masukkan nomor tujuan atau ID akun dengan benar!');
+                return false;
+            }
+            return target;
+        }
+
+        function bukaModalKonfirmasiData() {
+            if (!selectedProduct) return;
+
+            if (currentStoreStatus === 'CLOSED') {
+                return alert('🛑 Toko sedang tutup sementara untuk pemeliharaan sistem. Silakan coba beberapa saat lagi.');
+            }
+
+            if (activeBelanjaTier === 'VIP' && !userIsReseller) {
+                document.getElementById('lockedVipIcon').innerText = '👑';
+                document.getElementById('lockedVipTitle').innerText = 'Akses VIP Normal Terkunci';
+                document.getElementById('lockedVipDesc').innerHTML = `Untuk membuka harga grosir termurah, Anda cukup mencapai <b>250 transaksi non-wallet</b> di bulan ini.<br><br>📊 Transaksi bulan ini: <b>${userMonthlyTrx}/250 TRX</b>.<br><i>Catatan: Progres transaksi akan otomatis direset setiap tanggal 1!</i>`;
+                document.getElementById('lockedVipActionArea').innerHTML = `
+                    <button class="btn-action" onclick="document.getElementById('lockedVipModal').style.display='none'">Kembali Berbelanja 🛒</button>
+                `;
+                document.getElementById('lockedVipModal').style.display = 'flex';
+                return;
+            }
+
+            if (activeBelanjaTier === 'VIP_SUPER' && !userIsVipSuper) {
+                document.getElementById('lockedVipIcon').innerText = '⚡';
+                document.getElementById('lockedVipTitle').innerText = 'Akses VIP Super (0% Untung)';
+                document.getElementById('lockedVipDesc').innerHTML = `Belanja seluruh produk dengan <b>harga modal server pusat distributor utama tanpa untung sepeser pun!</b><br><br>💎 Biaya langganan: <b>Rp 500.000 / 30 Hari</b>.<br>Pilih metode pembayaran otomatis di bawah:`;
+                document.getElementById('lockedVipActionArea').innerHTML = `
+                    <button class="btn-action" onclick="pesanVipSuperDenganPin('SALDO')" style="margin-bottom:8px;">💰 Bayar Pakai Saldo Akun (Rp 500.000)</button>
+                    <button class="btn-action" onclick="pesanVipSuperDenganPin('QRIS')" style="background:linear-gradient(135deg, #00F0FF, #0072FF); color:#000;">⚡ Scan QRIS Instan (Rp 500.000)</button>
+                `;
+                document.getElementById('lockedVipModal').style.display = 'flex';
+                return;
+            }
+
+            const target = validasiInputDinamis();
+            if (!target) return;
+
+            document.getElementById('confProdName').innerText = selectedProduct.nama;
+            document.getElementById('confProdPrice').innerText = `Rp ${Number(selectedProduct.currentPrice).toLocaleString('id-ID')}`;
+            document.getElementById('confTargetVal').innerText = target;
+
+            if (selectedProduct.isPasca && selectedProduct.customerName) {
+                document.getElementById('confPascaCustName').innerText = selectedProduct.customerName;
+                document.getElementById('confPascaInfoRow').style.display = 'flex';
+            } else {
+                document.getElementById('confPascaInfoRow').style.display = 'none';
+            }
+
+            document.getElementById('confirmDataModal').style.display = 'flex';
+        }
+
+        function pesanVipSuperDenganPin(metode) {
+            document.getElementById('lockedVipModal').style.display = 'none';
+            pendingCheckoutMetode = metode;
+            pinActionType = 'VIP_SUPER';
+            bukaModalPin();
+        }
+
+        async function eksekusiVipSuperFinal() {
+            if (pendingCheckoutMetode === 'SALDO') {
+                try {
+                    const res = await fetch('/api/user/order-vip-super', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ nomor: userNomor, metode: 'SALDO', pin: verifiedPinSession })
+                    });
+                    const d = await res.json();
+                    if (d.success) {
+                        alert(d.message);
+                        window.location.reload();
+                    } else { alert('❌ ' + d.error); }
+                } catch(e) { alert('Gagal memproses langganan.'); }
+            } else {
+                try {
+                    const res = await fetch('/api/user/order-vip-super', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ nomor: userNomor, metode: 'QRIS', pin: verifiedPinSession })
+                    });
+                    const d = await res.json();
+                    if (d.success) {
+                        simpanOrderAktifKeLocal({
+                            trxId: d.trxId,
+                            namaProduk: 'LANGGANAN VIP SUPER (30 HARI)',
+                            target: userNomor,
+                            total: d.tagihan,
+                            metode: 'QRIS',
+                            status: 'WAITING_PAYMENT',
+                            expiredAt: Date.now() + (5 * 60 * 1000)
+                        });
+                        tampilkanModalQris(d.tagihan, d.trxId);
+                    }
+                } catch(e) { alert('Gagal membuat tagihan QRIS.'); }
+            }
+        }
+
+        function lanjutKePembayaran() {
+            document.getElementById('confirmDataModal').style.display = 'none';
+            document.getElementById('btnModalSaldoPrice').innerText = `Rp ${Number(selectedProduct.currentPrice).toLocaleString('id-ID')}`;
+            document.getElementById('btnModalQrisPrice').innerText = `Rp ${Number(selectedProduct.currentPrice).toLocaleString('id-ID')} (+ Unik)`;
+            document.getElementById('payModal').style.display = 'flex';
+        }
+
+        function tutupModal() {
+            document.getElementById('payModal').style.display = 'none';
+            document.getElementById('qrisModal').style.display = 'none';
+        }
+
+        function bukaGambarPenuh() {
+            window.open(document.getElementById('qrisImg').src, '_blank');
+        }
+
+        function klikBayarSaldo() {
+            if (currentUserSaldo < selectedProduct.currentPrice) {
+                return alert('Saldo akun Kakak tidak mencukupi! Silakan gunakan metode QRIS.');
+            }
+            pendingCheckoutMetode = 'SALDO';
+            pinActionType = 'CHECKOUT';
+            bukaModalPin();
+        }
+
+        function klikBayarQris() {
+            pendingCheckoutMetode = 'QRIS';
+            pinActionType = 'CHECKOUT';
+            bukaModalPin();
+        }
+
+        function bukaModalWdPin() {
+            const wallet = document.getElementById('wdWallet').value;
+            const target = document.getElementById('wdTarget').value.trim();
+            if (!target || !/^(08|628)\d{8,12}$/.test(target)) return alert(`Harap masukkan nomor ${wallet} yang valid!`);
+            if (selectedWdNominal < 10000) return alert('Pilih nominal penarikan terlebih dahulu!');
+            pinActionType = 'WD';
+            bukaModalPin();
+        }
+
+        function bukaModalDepoPin() {
+            const amt = parseInt(document.getElementById('depoAmount').value);
+            if (isNaN(amt) || amt < 10000) return alert('Nominal deposit minimal Rp 10.000!');
+            pinActionType = 'DEPOSIT';
+            bukaModalPin();
+        }
+
+        function bukaModalPin() {
+            document.getElementById('payModal').style.display = 'none';
+            document.getElementById('inputPinVal').value = '';
+            document.getElementById('pinModal').style.display = 'flex';
+        }
+
+        function bukaModalUbahPin() {
+            document.getElementById('inputOldPinVal').value = '';
+            document.getElementById('inputNewPinVal').value = '';
+            document.getElementById('inputNewPinConfirmVal').value = '';
+            document.getElementById('changePinModal').style.display = 'flex';
+        }
+
+        async function eksekusiUbahPin() {
+            const oldP = document.getElementById('inputOldPinVal').value.trim();
+            const newP = document.getElementById('inputNewPinVal').value.trim();
+            const confirmP = document.getElementById('inputNewPinConfirmVal').value.trim();
+
+            if (!/^\d{4,6}$/.test(oldP)) return alert('PIN lama harus 4-6 digit angka!');
+            if (!/^\d{4,6}$/.test(newP)) return alert('PIN baru harus 4-6 digit angka!');
+            if (newP !== confirmP) return alert('Konfirmasi PIN baru tidak cocok!');
+            if (oldP === newP) return alert('PIN baru tidak boleh sama dengan PIN lama!');
+
+            try {
+                const res = await fetch('/api/user/change-pin', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ nomor: userNomor, oldPin: oldP, newPin: newP })
+                });
+                const d = await res.json();
+                if (d.success) {
+                    alert('✅ ' + d.message);
+                    document.getElementById('changePinModal').style.display = 'none';
+                } else {
+                    alert('❌ ' + (d.error || 'Gagal mengubah PIN.'));
+                }
+            } catch(e) { alert('Koneksi bermasalah.'); }
+        }
+
+        async function eksekusiPinSubmit() {
+            const pVal = document.getElementById('inputPinVal').value.trim();
+            if (!/^\d{4,6}$/.test(pVal)) return alert('PIN wajib berupa 4-6 digit angka!');
+            verifiedPinSession = pVal;
+            document.getElementById('pinModal').style.display = 'none';
+
+            if (pinActionType === 'CHECKOUT') eksekusiCheckout(pendingCheckoutMetode);
+            else if (pinActionType === 'VIP_SUPER') eksekusiVipSuperFinal();
+            else if (pinActionType === 'WD') eksekusiWithdrawFinal();
+            else if (pinActionType === 'DEPOSIT') eksekusiDepositFinal();
+        }
+
+        async function eksekusiDepositFinal() {
+            const amt = parseInt(document.getElementById('depoAmount').value);
+            try {
+                const res = await fetch('/api/deposit', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ nomor: userNomor, amount: amt, pin: verifiedPinSession })
+                });
+                const d = await res.json();
+                if (d.success) {
+                    simpanOrderAktifKeLocal({
+                        trxId: d.trxId,
+                        namaProduk: 'DEPOSIT SALDO AKUN',
+                        target: userNomor,
+                        total: d.tagihan,
+                        metode: 'QRIS',
+                        status: 'WAITING_PAYMENT',
+                        expiredAt: Date.now() + (5 * 60 * 1000)
+                    });
+                    tampilkanModalQris(d.tagihan, d.trxId);
+                } else { alert('❌ ' + d.error); }
+            } catch(e) { alert('Gagal membuat deposit.'); }
+        }
+
+        async function eksekusiCheckout(metode) {
+            const finalTarget = validasiInputDinamis();
+            if (!finalTarget) return;
+
+            tutupModal();
+            try {
+                const res = await fetch('/api/checkout', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        nomor: userNomor,
+                        target: finalTarget,
+                        metode: metode,
+                        sku: selectedProduct.sku,
+                        pin: verifiedPinSession,
+                        tier: activeBelanjaTier,
+                        isPasca: selectedProduct.isPasca ? 1 : 0,
+                        pascaPrice: selectedProduct.currentPrice,
+                        refIdInq: selectedProduct.refIdInq || ''
+                    })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    if (metode === 'SALDO') {
+                        alert('✅ ' + data.message);
+                        simpanOrderAktifKeLocal({
+                            trxId: data.trxId,
+                            namaProduk: selectedProduct.nama,
+                            target: finalTarget,
+                            total: selectedProduct.currentPrice,
+                            metode: 'SALDO',
+                            status: 'PROCESSING',
+                            expiredAt: Date.now() + (30 * 60 * 1000)
+                        });
+                        startAutoPolling();
+                        window.location.reload();
+                    } else {
+                        simpanOrderAktifKeLocal({
+                            trxId: data.trxId,
+                            namaProduk: selectedProduct.nama,
+                            target: finalTarget,
+                            total: data.tagihan,
+                            metode: 'QRIS',
+                            status: 'WAITING_PAYMENT',
+                            expiredAt: Date.now() + (5 * 60 * 1000)
+                        });
+                        tampilkanModalQris(data.tagihan, data.trxId);
+                        startAutoPolling();
+                    }
+                } else { alert('❌ ' + data.error); }
+            } catch(e) { alert('Gagal menghubungi server.'); }
+        }
+
+        function tampilkanModalQris(tagihan, trxId) {
+            document.getElementById('qrisTagihan').innerText = 'Rp ' + Number(tagihan).toLocaleString('id-ID');
+            document.getElementById('qrisModal').style.display = 'flex';
+            mulaiCountdownBanner();
+        }
+
+        function bukaQrisDariBanner() {
+            if (!activeOrderData) return;
+            document.getElementById('qrisTagihan').innerText = 'Rp ' + Number(activeOrderData.total).toLocaleString('id-ID');
+            document.getElementById('qrisModal').style.display = 'flex';
+        }
+
+        function simpanOrderAktifKeLocal(orderObj) {
+            activeOrderData = orderObj;
+            localStorage.setItem('mstoreee_active_order', JSON.stringify(orderObj));
+            renderBannerOrder();
+        }
+
+        function muatOrderAktifDariLocal() {
+            try {
+                let saved = localStorage.getItem('mstoreee_active_order');
+                if (saved) {
+                    activeOrderData = JSON.parse(saved);
+                    renderBannerOrder();
+                    startAutoPolling();
+                    cekStatusPesananAktif(false);
+                }
+            } catch(e){}
+        }
+
+        function renderBannerOrder() {
+            const banner = document.getElementById('activeOrderBanner');
+            if (!activeOrderData) {
+                banner.style.display = 'none';
+                if (orderCountdownInterval) clearInterval(orderCountdownInterval);
+                if (pollingInterval) clearInterval(pollingInterval);
+                return;
+            }
+
+            banner.style.display = 'block';
+            document.getElementById('bannerProdTitle').innerText = activeOrderData.namaProduk;
+            document.getElementById('bannerTargetTitle').innerText = `Tujuan: ${activeOrderData.target} (${activeOrderData.trxId})`;
+            document.getElementById('bannerTagihanText').innerText = 'Rp ' + Number(activeOrderData.total).toLocaleString('id-ID');
+
+            const badge = document.getElementById('bannerBadgeStatus');
+            const snBox = document.getElementById('bannerSnBox');
+            const actionBtns = document.getElementById('bannerActionButtons');
+            const btnCloseSuccess = document.getElementById('bannerBtnCloseSuccess');
+            const btnViewQris = document.getElementById('btnBannerViewQris');
+
+            if (activeOrderData.metode === 'SALDO') {
+                btnViewQris.style.display = 'none';
+            } else {
+                btnViewQris.style.display = 'block';
+            }
+
+            if (activeOrderData.status === 'WAITING_PAYMENT') {
+                badge.className = 'order-badge-pill order-badge-waiting';
+                badge.innerText = 'MENUNGGU PEMBAYARAN QRIS';
+                snBox.style.display = 'none';
+                actionBtns.style.display = 'grid';
+                btnCloseSuccess.style.display = 'none';
+                mulaiCountdownBanner();
+            } else if (activeOrderData.status === 'PROCESSING') {
+                badge.className = 'order-badge-pill order-badge-process';
+                badge.innerText = (activeOrderData.metode === 'SALDO') ? 'DIPROSES VIA SALDO AKUN ⚡' : 'PEMBAYARAN DITERIMA - DIPROSES PUSAT ⚡';
+                snBox.style.display = 'none';
+                actionBtns.style.display = 'grid';
+                btnViewQris.style.display = 'none';
+                btnCloseSuccess.style.display = 'none';
+            } else if (activeOrderData.status === 'SUCCESS') {
+                badge.className = 'order-badge-pill order-badge-success';
+                badge.innerText = 'PESANAN SUKSES BERHASIL ✅';
+                snBox.style.display = 'block';
+                document.getElementById('bannerSnValue').innerText = activeOrderData.sn || activeOrderData.trxId;
+                actionBtns.style.display = 'none';
+                btnCloseSuccess.style.display = 'block';
+                if (orderCountdownInterval) clearInterval(orderCountdownInterval);
+                if (pollingInterval) clearInterval(pollingInterval);
+                document.getElementById('bannerCountdownText').innerText = '';
+            } else if (activeOrderData.status === 'EXPIRED') {
+                badge.className = 'order-badge-pill order-badge-expired';
+                badge.innerText = 'BATAS WAKTU HABIS (EXPIRED) ⚠️';
+                actionBtns.style.display = 'none';
+                btnCloseSuccess.style.display = 'block';
+                btnCloseSuccess.innerText = '✕ Hapus Notifikasi Expired';
+                document.getElementById('bannerCountdownText').innerText = 'Waktu Habis';
+            }
+        }
+
+        function startAutoPolling() {
+            if (pollingInterval) clearInterval(pollingInterval);
+            pollingInterval = setInterval(async () => {
+                if (!activeOrderData || (activeOrderData.status !== 'WAITING_PAYMENT' && activeOrderData.status !== 'PROCESSING')) {
+                    clearInterval(pollingInterval);
+                    return;
+                }
+                await cekStatusPesananAktif(false);
+            }, 3000);
+        }
+
+        function triggerFloatingSuccessTicker(targetNo, prodName, harga) {
+            let maskedNo = targetNo.length > 7 ? targetNo.substring(0, 4) + '****' + targetNo.substring(targetNo.length - 4) : targetNo;
+            let text = `🎉 Terima kasih kepada Kak ${maskedNo} telah sukses berbelanja ${prodName} (Rp ${Number(harga).toLocaleString('id-ID')}). Semoga langganan setia di MStoreeebyAsrul! 🚀`;
+            let box = document.getElementById('liveSuccessTicker');
+            let tText = document.getElementById('liveSuccessText');
+            tText.innerText = text;
+            box.style.display = 'block';
+            setTimeout(() => { box.style.display = 'none'; }, 14500);
+        }
+
+        function mulaiCountdownBanner() {
+            if (orderCountdownInterval) clearInterval(orderCountdownInterval);
+            const cdText = document.getElementById('bannerCountdownText');
+            const modalNotice = document.getElementById('qrisTimerNotice');
+
+            function updateTimer() {
+                if (!activeOrderData || activeOrderData.status !== 'WAITING_PAYMENT') {
+                    if (orderCountdownInterval) clearInterval(orderCountdownInterval);
+                    return;
+                }
+                const now = Date.now();
+                const diff = Math.max(0, Math.floor((activeOrderData.expiredAt - now) / 1000));
+                
+                let mins = Math.floor(diff / 60);
+                let secs = diff % 60;
+                let formatted = `${String(mins).padStart(2,'0')}:${String(secs).padStart(2,'0')}`;
+
+                cdText.innerText = `⏳ Batas Bayar: ${formatted}`;
+                if (modalNotice) modalNotice.innerText = `⏳ Sisa Waktu Bayar: ${formatted}`;
+
+                if (diff <= 0) {
+                    clearInterval(orderCountdownInterval);
+                    activeOrderData.status = 'EXPIRED';
+                    simpanOrderAktifKeLocal(activeOrderData);
+                    alert('⚠️ Batas waktu 5 menit pembayaran QRIS telah berakhir.');
+                }
+            }
+            updateTimer();
+            orderCountdownInterval = setInterval(updateTimer, 1000);
+        }
+
+        async function cekStatusPesananAktif(manual = false) {
+            if (!activeOrderData) return;
+            try {
+                const res = await fetch(`/api/check-status?trxId=${activeOrderData.trxId}&nomor=${userNomor}`);
+                const d = await res.json();
+                if (d.status === 'SUCCESS') {
+                    let oldStatus = activeOrderData.status;
+                    activeOrderData.status = 'SUCCESS';
+                    activeOrderData.sn = d.sn || d.latestHist?.sn || activeOrderData.trxId;
+                    simpanOrderAktifKeLocal(activeOrderData);
+                    if (oldStatus !== 'SUCCESS') {
+                        triggerFloatingSuccessTicker(activeOrderData.target, activeOrderData.namaProduk, activeOrderData.total);
+                    }
+                    tutupModal();
+                    if (manual) alert('🎉 Pesanan Anda telah Sukses!');
+                } else if (d.status === 'PAID') {
+                    activeOrderData.status = 'PROCESSING';
+                    simpanOrderAktifKeLocal(activeOrderData);
+                    if (manual) alert('⚡ Pembayaran terverifikasi! Pesanan sedang diproses server pusat.');
+                } else if (d.status === 'CANCELED') {
+                    localStorage.removeItem('mstoreee_active_order');
+                    activeOrderData = null;
+                    renderBannerOrder();
+                    if (manual) alert('Pesanan telah dibatalkan.');
+                } else {
+                    if (manual) alert('⏳ Pembayaran belum terdeteksi. Silakan transfer tepat sesuai nominal unik.');
+                }
+            } catch(e){}
+        }
+
+        async function batalkanPesananAktif() {
+            if (!activeOrderData) return;
+            if (!confirm('Apakah Kakak yakin ingin membatalkan pesanan ini?')) return;
+            try {
+                await fetch('/api/cancel-order', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ trxId: activeOrderData.trxId })
+                });
+                localStorage.removeItem('mstoreee_active_order');
+                activeOrderData = null;
+                renderBannerOrder();
+                tutupModal();
+                alert('Pesanan berhasil dibatalkan.');
+            } catch(e){ alert('Gagal membatalkan pesanan.'); }
+        }
+
+        function tutupBannerSukses() {
+            localStorage.removeItem('mstoreee_active_order');
+            activeOrderData = null;
+            renderBannerOrder();
+        }
+
+        function pilihDepoNominal(n, chip) {
+            document.querySelectorAll('#tab-deposit .denom-chip').forEach(c => c.classList.remove('active'));
+            chip.classList.add('active');
+            document.getElementById('depoAmount').value = n;
+        }
+
+        function pilihWdNominal(n, chip) {
+            document.querySelectorAll('#tab-tarik .denom-chip').forEach(c => c.classList.remove('active'));
+            chip.classList.add('active');
+            selectedWdNominal = n;
+            const total = n + 520;
+            document.getElementById('wdRincianNominal').innerText = 'Rp ' + Number(n).toLocaleString('id-ID');
+            document.getElementById('wdRincianTotal').innerText = 'Rp ' + Number(total).toLocaleString('id-ID');
+            const btn = document.getElementById('btnProsesWd');
+            btn.innerText = `Tarik Saldo Sekarang (Rp ${Number(total).toLocaleString('id-ID')})`;
+            btn.disabled = false;
+            btn.style.opacity = '1';
+        }
+
+        async function eksekusiWithdrawFinal() {
+            const wallet = document.getElementById('wdWallet').value;
+            const target = document.getElementById('wdTarget').value.trim();
+            const res = await fetch('/api/withdraw', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ nomor: userNomor, ewallet: wallet, targetNo: target, nominal: selectedWdNominal, pin: verifiedPinSession })
+            });
+            const d = await res.json();
+            alert(d.message || d.error);
+            if (d.success) window.location.reload();
+        }
+
+        async function putarSpin() {
+            const res = await fetch('/api/spin', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ nomor: userNomor })
+            });
+            const d = await res.json();
+            alert(d.success ? `🎉 Hadiah: ${d.hadiah}` : d.error);
+            if (d.success) window.location.reload();
+        }
+
+        // FITUR BARU: SCAN PRODUK GANGGUAN / OFFLINE KE BACKEND
+        async function adminScanTroubledProducts() {
+            const btn = document.getElementById('btnScanTroubled');
+            const tbody = document.getElementById('adminTroubledTableBody');
+            if (btn) btn.innerText = 'Memindai Produk... ⏳';
+            try {
+                const res = await fetch(`/api/admin/troubled-products?adminNo=${userNomor}`);
+                const d = await res.json();
+                if (d.success && Array.isArray(d.troubled)) {
+                    document.getElementById('adminTroubledCount').innerText = `${d.troubled.length} Item`;
+                    if (d.troubled.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:12px; color:var(--success); font-weight:800;">✅ Semua produk normal & aman!</td></tr>';
+                    } else {
+                        let html = '';
+                        d.troubled.forEach(p => {
+                            html += `
+                                <tr>
+                                    <td><b style="color:var(--primary-cyan)">${p.sku}</b></td>
+                                    <td>${p.nama}</td>
+                                    <td>Rp ${Number(p.price).toLocaleString('id-ID')}</td>
+                                    <td style="color:var(--danger); font-weight:800;">${p.reason}</td>
+                                </tr>
+                            `;
+                        });
+                        tbody.innerHTML = html;
+                    }
+                }
+            } catch(e) { alert('Gagal memindai produk gangguan.'); }
+            finally { if (btn) btn.innerText = '🔍 Pindai Produk Gangguan Sekarang'; }
+        }
+
+        async function adminLoadSettings() {
+            try {
+                const res = await fetch(`/api/admin/get-data?adminNo=${userNomor}`);
+                const d = await res.json();
+                if (d.success) {
+                    d.settings.forEach(s => {
+                        if (s.key === 'MARGIN_GLOBAL') document.getElementById('marginGlobalInput').value = s.value;
+                        if (s.key === 'MARGIN_RESELLER') document.getElementById('marginResellerInput').value = s.value;
+                    });
+                    document.getElementById('adminCuanHariIni').innerText = 'Rp ' + Number(d.cuanHariIni || 0).toLocaleString('id-ID');
+                    document.getElementById('adminCuanBulanIni').innerText = 'Rp ' + Number(d.cuanBulanIni || 0).toLocaleString('id-ID');
+                    document.getElementById('adminTrxHariIni').innerText = (d.trxHariIni || 0) + 'x';
+
+                    if (Array.isArray(d.tiers)) {
+                        adminTiers = d.tiers;
+                        renderTierList();
+                    }
+
+                    if (d.announcement) document.getElementById('adminAnnounceText').value = d.announcement;
+
+                    currentStoreStatus = d.storeStatus || 'OPEN';
+                    updateStoreStatusUI(currentStoreStatus);
+
+                    const spinTable = document.getElementById('adminSpinTableBody');
+                    if (spinTable && Array.isArray(d.spinHistory)) {
+                        document.getElementById('adminSpinTotalCount').innerText = `${d.spinHistory.length} Putaran`;
+                        if (d.spinHistory.length === 0) {
+                            spinTable.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:12px; color:var(--text-muted);">Belum ada riwayat spin.</td></tr>';
+                        } else {
+                            let spHtml = '';
+                            d.spinHistory.forEach(sp => {
+                                spHtml += `
+                                    <tr>
+                                        <td><b>${sp.nomor}</b></td>
+                                        <td>${sp.hadiah}</td>
+                                        <td style="color:var(--success); font-weight:800;">Rp ${Number(sp.nominal || 0).toLocaleString('id-ID')}</td>
+                                        <td style="color:var(--text-muted); font-size:10px;">${sp.tanggal}</td>
+                                    </tr>
+                                `;
+                            });
+                            spinTable.innerHTML = spHtml;
+                        }
+                    }
+
+                    const skuTable = document.getElementById('adminSkuMarginTableBody');
+                    if (skuTable && Array.isArray(d.skuMargins)) {
+                        document.getElementById('adminSkuMarginCount').innerText = `${d.skuMargins.length} SKU`;
+                        if (d.skuMargins.length === 0) {
+                            skuTable.innerHTML = '<tr><td colspan="3" style="text-align:center; padding:12px; color:var(--text-muted);">Belum ada margin khusus per SKU.</td></tr>';
+                        } else {
+                            let sHtml = '';
+                            d.skuMargins.forEach(sm => {
+                                sHtml += `
+                                    <tr>
+                                        <td><b style="color:var(--primary-cyan)">${sm.key}</b></td>
+                                        <td>Rp ${Number(sm.value).toLocaleString('id-ID')}</td>
+                                        <td><button style="background:rgba(255,51,102,0.2); border:1px solid var(--danger); color:var(--danger); border-radius:6px; padding:4px 8px; font-size:10px; font-weight:800; cursor:pointer;" onclick="adminHapusSkuMargin('${sm.key}')">Hapus</button></td>
+                                    </tr>
+                                `;
+                            });
+                            skuTable.innerHTML = sHtml;
+                        }
+                    }
+
+                    const topProdTable = document.getElementById('adminTopProductsTableBody');
+                    if (topProdTable && Array.isArray(d.topProducts)) {
+                        if (d.topProducts.length === 0) {
+                            topProdTable.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:12px; color:var(--text-muted);">Belum ada riwayat pesanan.</td></tr>';
+                        } else {
+                            let tpHtml = '';
+                            d.topProducts.forEach((tp, idx) => {
+                                tpHtml += `
+                                    <tr>
+                                        <td><b>#${idx+1}</b></td>
+                                        <td>${tp.sku}</td>
+                                        <td style="color:var(--primary-cyan); font-weight:800;">${tp.total_trx}x</td>
+                                        <td style="color:var(--success); font-weight:800;">Rp ${Number(tp.total_omset).toLocaleString('id-ID')}</td>
+                                    </tr>
+                                `;
+                            });
+                            topProdTable.innerHTML = tpHtml;
+                        }
+                    }
+
+                    const sList = document.getElementById('adminTopMembersList');
+                    if (sList && Array.isArray(d.topMembers)) {
+                        let sHtml = '';
+                        d.topMembers.forEach((m, idx) => {
+                            sHtml += `
+                                <div class="tier-badge-item">
+                                    <span><b>#${idx+1} ${m.nama || m.id}</b> (${m.trx_count} Trx)</span>
+                                    <span style="color:var(--gold-vip); font-weight:900;">Rp ${Number(m.total_spent).toLocaleString('id-ID')}</span>
+                                </div>
+                            `;
+                        });
+                        sList.innerHTML = sHtml || '<div style="color:var(--text-muted);">Belum ada data sultan.</div>';
+                    }
+
+                    const qTable = document.getElementById('adminQueueTableBody');
+                    if (qTable && Array.isArray(d.activeQueue)) {
+                        document.getElementById('adminQueueCount').innerText = `${d.activeQueue.length} Antrean`;
+                        let qHtml = '';
+                        d.activeQueue.forEach(q => {
+                            let badgeColor = q.payment_status === 'PAID' ? 'var(--warning)' : 'var(--primary-cyan)';
+                            qHtml += `
+                                <tr>
+                                    <td><b>${q.trx_id}</b></td>
+                                    <td>${q.target}</td>
+                                    <td>Rp ${Number(q.total_bayar).toLocaleString('id-ID')}</td>
+                                    <td style="color:${badgeColor}; font-weight:800;">${q.payment_status}</td>
+                                </tr>
+                            `;
+                        });
+                        qTable.innerHTML = qHtml || '<tr><td colspan="4" style="text-align:center; padding:12px; color:var(--text-muted);">Tidak ada antrean tertunda.</td></tr>';
+                    }
+
+                    const mList = document.getElementById('adminMonthlyProfitList');
+                    if (mList && Array.isArray(d.history6Bulan)) {
+                        let mHtml = '';
+                        d.history6Bulan.forEach(m => {
+                            mHtml += `
+                                <div class="tier-badge-item" style="padding:10px 12px; margin-bottom:8px;">
+                                    <span style="font-size:12px; font-weight:700;">🗓️ Bulan ${m.bulan}:</span>
+                                    <span style="color:var(--success); font-weight:900; font-size:13px;">Rp ${Number(m.total || 0).toLocaleString('id-ID')}</span>
+                                </div>
+                            `;
+                        });
+                        mList.innerHTML = mHtml || '<div style="color:var(--text-muted); font-size:11px; text-align:center;">Belum ada catatan.</div>';
+                    }
+                    adminCheckDigiBalance();
+                }
+            } catch(e) {}
+        }
+
+        async function adminHapusSkuMargin(key) {
+            if (!confirm(`Hapus margin khusus ${key}? Produk akan kembali mengikuti margin global.`)) return;
+            try {
+                const res = await fetch('/api/admin/delete-sku-margin', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ adminNo: userNomor, key: key })
+                });
+                const d = await res.json();
+                alert(d.message || d.error);
+                adminLoadSettings();
+            } catch(e) { alert('Gagal menghapus margin.'); }
+        }
+
+        async function adminCheckDigiBalance() {
+            const icon = document.getElementById('adminRefreshIcon');
+            const txt = document.getElementById('adminDigiBalanceText');
+            if (icon) icon.className = 'spin-rotate';
+            if (txt) txt.innerText = 'Cek...';
+            try {
+                const res = await fetch(`/api/admin/check-digi-balance?adminNo=${userNomor}`);
+                const d = await res.json();
+                if (txt) txt.innerText = d.success ? ('Rp ' + Number(d.deposit).toLocaleString('id-ID')) : 'Offline';
+            } catch(e) {
+                if (txt) txt.innerText = 'Offline';
+            } finally {
+                if (icon) icon.className = '';
+            }
+        }
+
+        function updateStoreStatusUI(status) {
+            const lbl = document.getElementById('adminStoreStatusLabel');
+            const btn = document.getElementById('btnToggleStore');
+            const banner = document.getElementById('storeClosedNotice');
+
+            if (status === 'CLOSED') {
+                lbl.innerText = '🔴 Tutup (Emergency)';
+                lbl.style.color = 'var(--danger)';
+                btn.innerText = 'Buka Toko';
+                btn.style.background = 'var(--success)';
+                banner.style.display = 'block';
+            } else {
+                lbl.innerText = '🟢 Buka (Normal)';
+                lbl.style.color = 'var(--success)';
+                btn.innerText = 'Tutup Toko';
+                btn.style.background = 'var(--danger)';
+                banner.style.display = 'none';
+            }
+        }
+
+        async function adminToggleStore() {
+            const nextStatus = (currentStoreStatus === 'OPEN') ? 'CLOSED' : 'OPEN';
+            const res = await fetch('/api/admin/toggle-store', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ adminNo: userNomor, status: nextStatus })
+            });
+            const d = await res.json();
+            if (d.success) {
+                currentStoreStatus = d.status;
+                updateStoreStatusUI(currentStoreStatus);
+                alert(d.message);
+            }
+        }
+
+        function renderTierList() {
+            const container = document.getElementById('tierListDisplay');
+            if (!container) return;
+            if (adminTiers.length === 0) {
+                container.innerHTML = '<div style="color:var(--text-muted); font-style:italic;">Belum ada margin bertingkat. (Menggunakan margin global).</div>';
+                return;
+            }
+            let html = '';
+            adminTiers.forEach((t, i) => {
+                html += `
+                    <div class="tier-badge-item">
+                        <span>Modal <b>&le; Rp ${Number(t.max).toLocaleString('id-ID')}</b> &rarr; Untung: <b style="color:var(--primary-cyan)">Rp ${Number(t.margin).toLocaleString('id-ID')}</b></span>
+                        <button style="background:none; border:none; color:var(--danger); font-weight:800; cursor:pointer;" onclick="adminHapusTier(${i})">Hapus</button>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        function adminTambahTier() {
+            const maxVal = parseInt(document.getElementById('tierMaxInput').value);
+            const marginVal = parseInt(document.getElementById('tierMarginInput').value);
+            if (isNaN(maxVal) || isNaN(marginVal) || maxVal <= 0 || marginVal < 0) {
+                return alert('⚠️ Masukkan batas maksimal modal dan nominal untung berupa angka!');
+            }
+            adminTiers = adminTiers.filter(t => t.max !== maxVal);
+            adminTiers.push({ max: maxVal, margin: marginVal });
+            adminTiers.sort((a, b) => a.max - b.max);
+            renderTierList();
+            document.getElementById('tierMaxInput').value = '';
+            document.getElementById('tierMarginInput').value = '';
+        }
+
+        function adminHapusTier(idx) {
+            adminTiers.splice(idx, 1);
+            renderTierList();
+        }
+
+        async function adminSimpanSemuaTier() {
+            const mInput = document.getElementById('tierMaxInput').value.trim();
+            const uInput = document.getElementById('tierMarginInput').value.trim();
+
+            if (mInput || uInput) {
+                return alert('⚠️ Kolom input modal/untung masih terisi angka tapi belum diklik "+ Tambah Tier". Silakan klik "+ Tambah Tier" terlebih dahulu sebelum menyimpan!');
+            }
+
+            if (adminTiers.length === 0) {
+                if (!confirm('⚠️ Daftar tier bertingkat kosong. Apakah Anda yakin ingin mengosongkan tier bertingkat dan mengembalikan semua keuntungan ke Margin Global?')) {
+                    return;
+                }
+            }
+
+            try {
+                const res = await fetch('/api/admin/save-tiers', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ adminNo: userNomor, tiers: adminTiers })
+                });
+                const d = await res.json();
+                alert(d.message || d.error);
+            } catch(e) { alert('Gagal menyimpan tier.'); }
+        }
+
+        async function adminKirimBroadcast() {
+            const msg = document.getElementById('adminBroadcastText').value.trim();
+            if (!msg) return alert('Ketik pesan promo massal!');
+            const res = await fetch('/api/admin/broadcast', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ adminNo: userNomor, message: msg })
+            });
+            const d = await res.json();
+            alert(d.message || d.error);
+        }
+
+        async function adminSimpanPengumuman() {
+            const text = document.getElementById('adminAnnounceText').value.trim();
+            const res = await fetch('/api/admin/set-announcement', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ adminNo: userNomor, text: text })
+            });
+            const d = await res.json();
+            alert(d.message || d.error);
+            window.location.reload();
+        }
+
+        async function adminSimpanMargin(key, val) {
+            if (!val) return alert('Masukkan nominal untung!');
+            const res = await fetch('/api/admin/set-margin', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ adminNo: userNomor, key: key, value: val })
+            });
+            const d = await res.json();
+            alert(d.message || d.error);
+            adminLoadSettings();
+        }
+
+        async function adminSimpanSkuMargin() {
+            const sku = document.getElementById('skuKeyInput').value.trim();
+            const val = document.getElementById('skuMarginInput').value.trim();
+            if (!sku || !val) return alert('Masukkan SKU dan untung!');
+            adminSimpanMargin('MARGIN_' + sku, val);
+        }
+
+        async function adminSimpanSkuMarginVip() {
+            const sku = document.getElementById('skuKeyInput').value.trim();
+            const val = document.getElementById('skuMarginInput').value.trim();
+            if (!sku || !val) return alert('Masukkan SKU dan untung!');
+            adminSimpanMargin('MARGIN_' + sku + '_RESELLER', val);
+        }
+
+        async function adminEksekusiResetPin() {
+            const target = document.getElementById('adminResetPinTarget').value.trim();
+            const pin = document.getElementById('adminResetPinValue').value.trim();
+            if (!target || !pin) return alert('Lengkapi nomor target dan PIN baru!');
+
+            const res = await fetch('/api/admin/reset-pin', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ adminNo: userNomor, targetNo: target, newPin: pin })
+            });
+            const d = await res.json();
+            alert(d.message || d.error);
+            adminLoadAllMembers();
+        }
+
+        async function adminKirimSaldo() {
+            const target = document.getElementById('adminTargetNo').value.trim();
+            const amt = document.getElementById('adminAmountNo').value.trim();
+            if (!target || !amt || parseInt(amt) === 0) return alert('Lengkapi data saldo!');
+            const res = await fetch('/api/admin/add-saldo', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ adminNo: userNomor, targetNo: target, amount: amt })
+            });
+            const d = await res.json();
+            alert(d.message || d.error);
+            window.location.reload();
+        }
+
+        async function adminLoadVisitors() {
+            try {
+                const res = await fetch(`/api/admin/visitor-logs?adminNo=${userNomor}`);
+                const d = await res.json();
+                if (d.success && Array.isArray(d.logs)) {
+                    document.getElementById('adminVisitorTotalCount').innerText = `${d.logs.length} Kunjungan`;
+                    let tbody = document.getElementById('adminVisitorTableBody');
+                    let html = '';
+                    d.logs.forEach(v => {
+                        html += `
+                            <tr>
+                                <td><b>${v.nomor}</b></td>
+                                <td>${v.nama || 'Pelanggan Setia'}</td>
+                                <td style="color:var(--primary-cyan); font-weight:700;">${v.tanggal}</td>
+                            </tr>
+                        `;
+                    });
+                    tbody.innerHTML = html || '<tr><td colspan="3" style="text-align:center; padding:16px;">Belum ada catatan kunjungan.</td></tr>';
+                }
+            } catch(e) {}
+        }
+
+        async function adminLoadAllMembers() {
+            try {
+                const res = await fetch(`/api/admin/all-members?adminNo=${userNomor}`);
+                const d = await res.json();
+                if (d.success && Array.isArray(d.members)) {
+                    document.getElementById('adminMemberTotalCount').innerText = `${d.members.length} Member`;
+                    let tbody = document.getElementById('adminMemberTableBody');
+                    let html = '';
+                    d.members.forEach(m => {
+                        html += `
+                            <tr>
+                                <td><b>${m.id}</b></td>
+                                <td>${m.nama || '-'}</td>
+                                <td style="color:var(--primary-cyan)">Rp ${Number(m.saldo).toLocaleString('id-ID')}</td>
+                                <td><b style="color:var(--warning)">${m.pin || '-'}</b></td>
+                                <td>${m.trx_count}x (${m.monthly_trx || 0}/bln)</td>
+                            </tr>
+                        `;
+                    });
+                    tbody.innerHTML = html || '<tr><td colspan="5" style="text-align:center; padding:12px;">Belum ada member.</td></tr>';
+                }
+            } catch(e) {}
+        }
+
+        async function adminRefreshKatalog() {
+            const res = await fetch('/api/admin/refresh-cache', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ adminNo: userNomor })
+            });
+            const d = await res.json();
+            alert(d.message || d.error);
+            await muatKatalogProduk();
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>
+EOF
