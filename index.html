@@ -869,14 +869,14 @@
             <button class="btn-track-action" id="btnRefreshVisitors" style="width:100%; background:#1B2234; color:#fff; font-size:11px; padding:9px; margin-top:8px; border:1px solid #242D45;" onclick="adminLoadVisitors(this)">🔄 Segarkan Data Pengunjung</button>
         </div>
 
-        <!-- CADANGAN DATABASE & DAFTAR MEMBER -->
+        <!-- CADANGAN DATABASE & DAFTAR MEMBER (TERLINDUNGI TOKEN ADMIN) -->
         <div class="card-box">
             <h4 style="font-size: 14px; margin-bottom: 6px; display:flex; align-items:center; gap:6px;">
                 <span>💾</span> Cadangan Database Toko
             </h4>
-            <a href="/mstoreee.db" download="mstoreee.db" class="btn-action" style="display:flex; align-items:center; justify-content:center; gap:6px; text-decoration:none; padding:12px; font-size:12px; background:#1B2234; border:1px solid #242D45; margin-top:0;">
+            <button onclick="unduhDatabaseBackup()" class="btn-action" style="display:flex; align-items:center; justify-content:center; gap:6px; padding:12px; font-size:12px; background:#1B2234; border:1px solid #242D45; margin-top:0; cursor:pointer;">
                 <span>📥</span> Unduh File Database (.db)
-            </a>
+            </button>
         </div>
 
         <div class="card-box">
@@ -1118,6 +1118,57 @@
 
         let isTickerShowingFresh = false;
 
+        // FUNGSI TOKEN KEAMANAN ADMIN
+        function getAdminToken() {
+            return localStorage.getItem('mstoreee_admin_token') || sessionStorage.getItem('mstoreee_admin_token') || '';
+        }
+
+        async function ensureAdminSession() {
+            if (getAdminToken()) return true;
+            let pin = prompt('🔐 Masukkan PIN Admin untuk verifikasi akses dashboard:');
+            if (!pin) return false;
+            try {
+                const res = await fetch('/api/user/verify-pin', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ nomor: userNomor, pin: pin })
+                });
+                const d = await res.json();
+                if (d.success && d.adminToken) {
+                    localStorage.setItem('mstoreee_admin_token', d.adminToken);
+                    sessionStorage.setItem('mstoreee_admin_token', d.adminToken);
+                    return true;
+                } else {
+                    alert('❌ PIN Admin salah atau tidak memiliki otorisasi.');
+                    return false;
+                }
+            } catch(e) {
+                alert('Gagal memverifikasi sesi admin.');
+                return false;
+            }
+        }
+
+        async function adminFetch(url, options = {}) {
+            options.headers = options.headers || {};
+            const token = getAdminToken();
+            if (token) {
+                options.headers['x-admin-token'] = token;
+            }
+            let separator = url.includes('?') ? '&' : '?';
+            let fullUrl = url;
+            if (token && !url.includes('adminToken=')) {
+                fullUrl += `${separator}adminToken=${encodeURIComponent(token)}`;
+            }
+            return fetch(fullUrl, options);
+        }
+
+        async function unduhDatabaseBackup() {
+            const ok = await ensureAdminSession();
+            if (!ok) return;
+            const token = getAdminToken();
+            window.location.href = `/mstoreee.db?adminNo=${encodeURIComponent(userNomor)}&adminToken=${encodeURIComponent(token)}`;
+        }
+
         // FUNGSI PENGAMAN ALERT AGAR TIDAK MENUMPUK DI MOBILE CHROME/ANDROID
         let isAlertActive = false;
         function showAlertSafe(msg) {
@@ -1130,7 +1181,7 @@
             }, 60);
         }
 
-        // FUNGSI CHAT ADMIN DINAMIS & KONTEKSTUAL (STATUS SUKSES VS MENUNGGU PEMBAYARAN)
+        // FUNGSI CHAT ADMIN DINAMIS & KONTEKSTUAL
         function hubungiAdminTrx(trxId) {
             let ord = activeOrdersList.find(o => o.trxId === trxId);
             let resi = ord ? ord.trxId : trxId;
@@ -1166,7 +1217,6 @@
             const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
             const wib = new Date(utc + (3600000 * 7));
             const totalMin = (wib.getHours() * 60) + wib.getMinutes();
-            // 23:30 WIB = 1410 min, 01:30 WIB = 90 min
             const isCutOff = (totalMin >= 1410 || totalMin <= 90);
             const banner = document.getElementById('cutOffNoticeBanner');
             if (banner) {
@@ -1224,7 +1274,7 @@
         async function adminToggleVip() {
             const nextStatus = (vipFeatureStatus === 'OPEN') ? 'LOCKED' : 'OPEN';
             try {
-                const res = await fetch('/api/admin/toggle-vip', {
+                const res = await adminFetch('/api/admin/toggle-vip', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ adminNo: userNomor, status: nextStatus })
@@ -1242,7 +1292,7 @@
         async function adminTogglePromo() {
             const nextStatus = (promoSuperStatus === 'ON') ? 'OFF' : 'ON';
             try {
-                const res = await fetch('/api/admin/toggle-promo', {
+                const res = await adminFetch('/api/admin/toggle-promo', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ adminNo: userNomor, status: nextStatus })
@@ -1317,9 +1367,13 @@
             }
 
             if (tabId === 'tab-admin' && isAdminUser) {
-                adminLoadSettings();
-                adminLoadVisitors();
-                adminLoadAllMembers();
+                ensureAdminSession().then(ok => {
+                    if (ok) {
+                        adminLoadSettings();
+                        adminLoadVisitors();
+                        adminLoadAllMembers();
+                    }
+                });
             }
         }
 
@@ -1357,6 +1411,11 @@
                 });
                 const vData = await vRes.json();
                 if (!vData.success) return alert('❌ ' + (vData.error || 'Nomor atau PIN salah!'));
+
+                if (vData.adminToken) {
+                    localStorage.setItem('mstoreee_admin_token', vData.adminToken);
+                    sessionStorage.setItem('mstoreee_admin_token', vData.adminToken);
+                }
 
                 const uRes = await fetch(`/api/user-info?nomor=${clean}`);
                 const uData = await uRes.json();
@@ -1421,6 +1480,11 @@
                     });
                     const vData = await vRes.json();
                     if (!vData.success) return alert('❌ ' + (vData.error || 'Nomor atau PIN salah!'));
+
+                    if (vData.adminToken) {
+                        localStorage.setItem('mstoreee_admin_token', vData.adminToken);
+                        sessionStorage.setItem('mstoreee_admin_token', vData.adminToken);
+                    }
 
                     const uRes = await fetch(`/api/user-info?nomor=${clean}`);
                     const uData = await uRes.json();
@@ -1549,9 +1613,13 @@
             const navAdmin = document.getElementById('navItemAdmin');
             if (isAdminUser) {
                 navAdmin.style.display = 'flex';
-                adminLoadSettings();
-                adminLoadVisitors();
-                adminLoadAllMembers();
+                ensureAdminSession().then(ok => {
+                    if (ok) {
+                        adminLoadSettings();
+                        adminLoadVisitors();
+                        adminLoadAllMembers();
+                    }
+                });
             } else {
                 navAdmin.style.display = 'none';
             }
@@ -1730,7 +1798,6 @@
             document.getElementById('floatingBar').style.display = 'none';
             document.getElementById('floatingWaBtn').classList.remove('shifted');
 
-            // GUARD ASYNC: Mencegah teks "tidak ditemukan" saat data dari Digiflazz masih diunduh
             if (!allProducts || allProducts.length === 0) {
                 list.innerHTML = '<div style="grid-column: span 2; text-align: center; color: var(--text-muted); padding: 30px;"><span class="spin-rotate">🔄</span> Memuat produk...</div>';
                 return;
@@ -2483,7 +2550,6 @@
                         const el = document.getElementById(`countdown_${ord.trxId}`);
                         if (el) el.innerText = `⏳ Batas: ${formatted}`;
 
-                        // SINKRONISASI AKTIF: Hitungan mundur di dalam modal QRIS ikut berdetik setiap detik
                         const qrisModal = document.getElementById('qrisModal');
                         if (qrisModal && qrisModal.style.display === 'flex') {
                             let activeQris = activeOrdersList.find(o => o.metode === 'QRIS' && o.status === 'WAITING_PAYMENT');
@@ -2552,7 +2618,6 @@
                     renderBannerOrders();
                     await refreshUserInfoSilent();
                     
-                    // AUTO-CLOSE ANTI-LOOPING MODAL QRIS DENGAN SINGLE-ALERT GUARD
                     if (isQrisModalOpen && !ord.hasNotifiedSuccess) {
                         ord.hasNotifiedSuccess = true;
                         simpanOrdersAktifKeLocal();
@@ -2583,7 +2648,6 @@
                     if (isDepo) {
                         await refreshUserInfoSilent();
                     }
-                    // AUTO-CLOSE ANTI-LOOPING MODAL QRIS DENGAN SINGLE-ALERT GUARD
                     if (isQrisModalOpen && !ord.hasNotifiedPaid) {
                         ord.hasNotifiedPaid = true;
                         simpanOrdersAktifKeLocal();
@@ -2693,7 +2757,7 @@
             const tbody = document.getElementById('adminTroubledTableBody');
             if (btn) btn.innerText = 'Memindai Produk... ⏳';
             try {
-                const res = await fetch(`/api/admin/troubled-products?adminNo=${userNomor}`);
+                const res = await adminFetch(`/api/admin/troubled-products?adminNo=${userNomor}`);
                 const d = await res.json();
                 if (d.success && Array.isArray(d.troubled)) {
                     document.getElementById('adminTroubledCount').innerText = `${d.troubled.length} Item`;
@@ -2720,7 +2784,7 @@
 
         async function adminLoadSettings() {
             try {
-                const res = await fetch(`/api/admin/get-data?adminNo=${userNomor}`);
+                const res = await adminFetch(`/api/admin/get-data?adminNo=${userNomor}`);
                 const d = await res.json();
                 if (d.success) {
                     d.settings.forEach(s => {
@@ -2849,7 +2913,7 @@
         async function adminHapusSkuMargin(key) {
             if (!confirm(`Hapus margin khusus ${key}? Produk akan kembali mengikuti margin global.`)) return;
             try {
-                const res = await fetch('/api/admin/delete-sku-margin', {
+                const res = await adminFetch('/api/admin/delete-sku-margin', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ adminNo: userNomor, key: key })
@@ -2866,7 +2930,7 @@
             if (icon) icon.className = 'spin-rotate';
             if (txt) txt.innerText = 'Cek...';
             try {
-                const res = await fetch(`/api/admin/check-digi-balance?adminNo=${userNomor}`);
+                const res = await adminFetch(`/api/admin/check-digi-balance?adminNo=${userNomor}`);
                 const d = await res.json();
                 if (txt) txt.innerText = d.success ? ('Rp ' + Number(d.deposit).toLocaleString('id-ID')) : 'Offline';
             } catch(e) {
@@ -2898,7 +2962,7 @@
 
         async function adminToggleStore() {
             const nextStatus = (currentStoreStatus === 'OPEN') ? 'CLOSED' : 'OPEN';
-            const res = await fetch('/api/admin/toggle-store', {
+            const res = await adminFetch('/api/admin/toggle-store', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ adminNo: userNomor, status: nextStatus })
@@ -2961,7 +3025,7 @@
 
         async function adminSimpanSemuaTier() {
             try {
-                const res = await fetch('/api/admin/save-tiers', {
+                const res = await adminFetch('/api/admin/save-tiers', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ adminNo: userNomor, tiers: adminTiers })
@@ -2980,7 +3044,7 @@
                 ? (role === 'REGULER' ? 'MARGIN_GLOBAL' : 'MARGIN_RESELLER')
                 : (role === 'REGULER' ? `MARGIN_CAT_${selCat}` : `MARGIN_CAT_${selCat}_RESELLER`);
 
-            const res = await fetch('/api/admin/set-margin', {
+            const res = await adminFetch('/api/admin/set-margin', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ adminNo: userNomor, key: key, value: val })
@@ -2993,7 +3057,7 @@
         async function adminKirimBroadcast() {
             const msg = document.getElementById('adminBroadcastText').value.trim();
             if (!msg) return alert('Ketik pesan promo massal!');
-            const res = await fetch('/api/admin/broadcast', {
+            const res = await adminFetch('/api/admin/broadcast', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ adminNo: userNomor, message: msg })
@@ -3004,7 +3068,7 @@
 
         async function adminSimpanPengumuman() {
             const text = document.getElementById('adminAnnounceText').value.trim();
-            const res = await fetch('/api/admin/set-announcement', {
+            const res = await adminFetch('/api/admin/set-announcement', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ adminNo: userNomor, text: text })
@@ -3018,7 +3082,7 @@
             const sku = document.getElementById('skuKeyInput').value.trim();
             const val = document.getElementById('skuMarginInput').value.trim();
             if (!sku || !val) return alert('Masukkan SKU dan untung!');
-            const res = await fetch('/api/admin/set-margin', {
+            const res = await adminFetch('/api/admin/set-margin', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ adminNo: userNomor, key: 'MARGIN_' + sku.toUpperCase(), value: val })
@@ -3032,7 +3096,7 @@
             const sku = document.getElementById('skuKeyInput').value.trim();
             const val = document.getElementById('skuMarginInput').value.trim();
             if (!sku || !val) return alert('Masukkan SKU dan untung!');
-            const res = await fetch('/api/admin/set-margin', {
+            const res = await adminFetch('/api/admin/set-margin', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ adminNo: userNomor, key: 'MARGIN_' + sku.toUpperCase() + '_RESELLER', value: val })
@@ -3047,7 +3111,7 @@
             const pin = document.getElementById('adminResetPinValue').value.trim();
             if (!target || !pin) return alert('Lengkapi nomor target dan PIN baru!');
 
-            const res = await fetch('/api/admin/reset-pin', {
+            const res = await adminFetch('/api/admin/reset-pin', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ adminNo: userNomor, targetNo: target, newPin: pin })
@@ -3061,7 +3125,7 @@
             const target = document.getElementById('adminTargetNo').value.trim();
             const amt = document.getElementById('adminAmountNo').value.trim();
             if (!target || !amt || parseInt(amt) === 0) return alert('Lengkapi data saldo!');
-            const res = await fetch('/api/admin/add-saldo', {
+            const res = await adminFetch('/api/admin/add-saldo', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ adminNo: userNomor, targetNo: target, amount: amt })
@@ -3079,7 +3143,7 @@
                 el.innerHTML = '<span class="spin-rotate">🔄</span> Memperbarui Data...';
             }
             try {
-                const res = await fetch(`/api/admin/visitor-logs?adminNo=${userNomor}`);
+                const res = await adminFetch(`/api/admin/visitor-logs?adminNo=${userNomor}`);
                 const d = await res.json();
                 if (d.success && Array.isArray(d.logs)) {
                     document.getElementById('adminVisitorTotalCount').innerText = `${d.logs.length} Kunjungan`;
@@ -3113,7 +3177,7 @@
 
         async function adminLoadAllMembers() {
             try {
-                const res = await fetch(`/api/admin/all-members?adminNo=${userNomor}`);
+                const res = await adminFetch(`/api/admin/all-members?adminNo=${userNomor}`);
                 const d = await res.json();
                 if (d.success && Array.isArray(d.members)) {
                     document.getElementById('adminMemberTotalCount').innerText = `${d.members.length} Member`;
@@ -3136,7 +3200,7 @@
         }
 
         async function adminRefreshKatalog() {
-            const res = await fetch('/api/admin/refresh-cache', {
+            const res = await adminFetch('/api/admin/refresh-cache', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ adminNo: userNomor })
