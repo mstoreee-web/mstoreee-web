@@ -149,7 +149,7 @@
         .announcement-marquee { overflow: hidden; white-space: nowrap; flex: 1; }
         .announcement-text { display: inline-block; font-size: 11.5px; color: #E0F7FA; font-weight: 700; animation: marqueeAnim 20s linear infinite; }
 
-        /* PITA NOTIFIKASI PROMO SUPER ELEGAN (CYBERPUNK ASLI, SEJUK DI MATA) */
+        /* PITA NOTIFIKASI PROMO SUPER ELEGAN */
         .promo-notice-banner {
             display: none;
             margin: 6px 16px 0;
@@ -1118,7 +1118,19 @@
 
         let isTickerShowingFresh = false;
 
-        // FUNGSI CHAT ADMIN KONTEKSTUAL (STATUS SUKSES VS MENUNGGU PEMBAYARAN)
+        // FUNGSI PENGAMAN ALERT AGAR TIDAK MENUMPUK DI MOBILE CHROME/ANDROID
+        let isAlertActive = false;
+        function showAlertSafe(msg) {
+            if (isAlertActive) return;
+            isAlertActive = true;
+            tutupModal();
+            setTimeout(() => {
+                alert(msg);
+                isAlertActive = false;
+            }, 60);
+        }
+
+        // FUNGSI CHAT ADMIN DINAMIS & KONTEKSTUAL (STATUS SUKSES VS MENUNGGU PEMBAYARAN)
         function hubungiAdminTrx(trxId) {
             let ord = activeOrdersList.find(o => o.trxId === trxId);
             let resi = ord ? ord.trxId : trxId;
@@ -1127,14 +1139,23 @@
             let tagihan = ord ? `Rp ${Number(ord.total).toLocaleString('id-ID')}` : '-';
             let sn = ord ? (ord.sn || '-') : '-';
             let status = ord ? ord.status : '';
+            let isDepo = ord ? Boolean(ord.isDepo || (ord.namaProduk && ord.namaProduk.toUpperCase().includes('DEPOSIT')) || (ord.trxId && ord.trxId.startsWith('DEP'))) : false;
 
             let msg = '';
-            if (status === 'SUCCESS') {
-                msg = `Halo Admin MStoreeebyAsrul, pesanan saya sudah berstatus sukses di sistem, namun saldo/produk belum masuk ke akun/nomor saya:\n• Resi: ${resi}\n• Layanan: ${layanan}\n• Tujuan: ${tujuan}\n• SN / Ref: ${sn}\n\nMohon bantuannya untuk dilakukan pengecekan ke server pusat ya min 🙏`;
-            } else if (status === 'FAILED') {
-                msg = `Halo Admin MStoreeebyAsrul, pesanan saya mengalami kendala gagal:\n• Resi: ${resi}\n• Layanan: ${layanan}\n• Tujuan: ${tujuan}\n• Penyebab: ${ord.reason || 'Gangguan Server'}\n\nMohon bantuannya untuk pengecekan atau pengembalian saldo ya min 🙏`;
+            if (isDepo) {
+                if (status === 'SUCCESS') {
+                    msg = `Halo Admin MStoreeebyAsrul, status deposit saya sudah sukses di sistem (Resi: ${resi} | ${tagihan}), namun saldo akun saya belum bertambah. Mohon bantuannya untuk pengecekan mutasi ya min 🙏`;
+                } else {
+                    msg = `Halo Admin MStoreeebyAsrul, saya butuh bantuan untuk deposit saldo akun berikut:\n• Resi: ${resi}\n• Nominal Transfer: ${tagihan}\n• Nomor Akun: ${tujuan}\n\nSaya sudah melakukan pembayaran via QRIS namun saldo akun belum masuk otomatis. Mohon bantuannya min 🙏`;
+                }
             } else {
-                msg = `Halo Admin MStoreeebyAsrul, saya butuh bantuan untuk pesanan berikut:\n• Resi: ${resi}\n• Layanan: ${layanan}\n• Tujuan: ${tujuan}\n• Tagihan: ${tagihan}\n\nSaya sudah melakukan pembayaran namun status belum terverifikasi otomatis. Mohon bantuannya min 🙏`;
+                if (status === 'SUCCESS') {
+                    msg = `Halo Admin MStoreeebyAsrul, pesanan saya sudah berstatus sukses di sistem, namun saldo/produk belum masuk ke akun/nomor saya:\n• Resi: ${resi}\n• Layanan: ${layanan}\n• Tujuan: ${tujuan}\n• SN / Ref: ${sn}\n\nMohon bantuannya untuk dilakukan pengecekan ke server pusat ya min 🙏`;
+                } else if (status === 'FAILED') {
+                    msg = `Halo Admin MStoreeebyAsrul, pesanan saya mengalami kendala gagal:\n• Resi: ${resi}\n• Layanan: ${layanan}\n• Tujuan: ${tujuan}\n• Penyebab: ${ord.reason || 'Gangguan Server'}\n\nMohon bantuannya untuk pengecekan atau pengembalian saldo ya min 🙏`;
+                } else {
+                    msg = `Halo Admin MStoreeebyAsrul, saya butuh bantuan untuk pesanan berikut:\n• Resi: ${resi}\n• Layanan: ${layanan}\n• Tujuan: ${tujuan}\n• Tagihan: ${tagihan}\n\nSaya sudah melakukan pembayaran namun status belum terverifikasi otomatis. Mohon bantuannya min 🙏`;
+                }
             }
             window.open(`https://wa.me/6281260007324?text=${encodeURIComponent(msg)}`, '_blank');
         }
@@ -1709,6 +1730,7 @@
             document.getElementById('floatingBar').style.display = 'none';
             document.getElementById('floatingWaBtn').classList.remove('shifted');
 
+            // GUARD ASYNC: Mencegah teks "tidak ditemukan" saat data dari Digiflazz masih diunduh
             if (!allProducts || allProducts.length === 0) {
                 list.innerHTML = '<div style="grid-column: span 2; text-align: center; color: var(--text-muted); padding: 30px;"><span class="spin-rotate">🔄</span> Memuat produk...</div>';
                 return;
@@ -2240,6 +2262,7 @@
                         total: d.tagihan,
                         metode: 'QRIS',
                         status: 'WAITING_PAYMENT',
+                        isDepo: true,
                         createdAt: Date.now(),
                         expiredAt: Date.now() + (5 * 60 * 1000)
                     });
@@ -2373,21 +2396,26 @@
             let html = '';
 
             activeOrdersList.forEach((ord) => {
+                let isDepo = Boolean(ord.isDepo || (ord.namaProduk && ord.namaProduk.toUpperCase().includes('DEPOSIT')) || (ord.trxId && ord.trxId.startsWith('DEP')));
                 let badgeClass = 'order-badge-waiting';
-                let badgeText = 'MENUNGGU PEMBAYARAN QRIS';
+                let badgeText = isDepo ? 'MENUNGGU TRANSFER DEPOSIT (QRIS)' : 'MENUNGGU PEMBAYARAN QRIS';
                 let showViewQris = (ord.metode === 'QRIS' && ord.status === 'WAITING_PAYMENT');
                 let showActions = (ord.status === 'WAITING_PAYMENT' || ord.status === 'PROCESSING');
                 let showClose = !showActions;
 
                 if (ord.status === 'PROCESSING') {
                     badgeClass = 'order-badge-process';
-                    badgeText = (ord.metode === 'SALDO') ? 'DIPROSES VIA SALDO AKUN ⚡' : 'PEMBAYARAN DITERIMA - DIPROSES PUSAT ⚡';
+                    if (isDepo) {
+                        badgeText = 'PEMBAYARAN DITERIMA - MENAMBAH SALDO ⚡';
+                    } else {
+                        badgeText = (ord.metode === 'SALDO') ? 'DIPROSES VIA SALDO AKUN ⚡' : 'PEMBAYARAN DITERIMA - DIPROSES PUSAT ⚡';
+                    }
                 } else if (ord.status === 'SUCCESS') {
                     badgeClass = 'order-badge-success';
-                    badgeText = 'PESANAN SUKSES BERHASIL ✅';
+                    badgeText = isDepo ? 'DEPOSIT SALDO SUKSES ✅' : 'PESANAN SUKSES BERHASIL ✅';
                 } else if (ord.status === 'FAILED') {
                     badgeClass = 'order-badge-failed';
-                    badgeText = 'TRANSAKSI GAGAL PUSAT ❌';
+                    badgeText = isDepo ? 'DEPOSIT GAGAL ❌' : 'TRANSAKSI GAGAL PUSAT ❌';
                 } else if (ord.status === 'EXPIRED') {
                     badgeClass = 'order-badge-expired';
                     badgeText = 'BATAS WAKTU HABIS (EXPIRED) ⚠️';
@@ -2405,7 +2433,7 @@
 
                         ${ord.status === 'SUCCESS' ? `
                             <div style="background:#07090E; border:1px solid var(--success); padding:8px; border-radius:8px; margin-top:8px; font-size:11px; color:var(--success); word-break:break-all;">
-                                <b>SN / Token:</b> ${ord.sn || ord.trxId}
+                                ${isDepo ? `<b>✅ Saldo Masuk:</b> Saldo sebesar <b>Rp ${Number(ord.total).toLocaleString('id-ID')}</b> telah berhasil ditambahkan ke akun Anda!` : `<b>SN / Token:</b> ${ord.sn || ord.trxId}`}
                             </div>
                         ` : ''}
 
@@ -2418,7 +2446,7 @@
                         ${showActions ? `
                             <div class="order-banner-actions">
                                 ${showViewQris ? `<button class="btn-order-action" style="background:var(--primary-cyan); color:#000;" onclick="bukaQrisDariResi('${ord.trxId}')">🔍 Buka Barcode QRIS</button>` : ''}
-                                <button class="btn-order-action" style="background:#242D45; color:#fff; ${!showViewQris ? 'grid-column:span 2;' : ''}" onclick="cekStatusPesananSatu('${ord.trxId}', true)">🔄 Cek Status</button>
+                                <button class="btn-order-action" id="btn_cek_${ord.trxId}" style="background:#242D45; color:#fff; ${!showViewQris ? 'grid-column:span 2;' : ''}" onclick="cekStatusPesananSatu('${ord.trxId}', true)">🔄 Cek Status</button>
                                 <button class="btn-order-action" style="background:rgba(37,211,102,0.15); border:1px solid #25D366; color:#25D366;" onclick="hubungiAdminTrx('${ord.trxId}')">💬 Hubungi Admin</button>
                                 ${ord.status === 'WAITING_PAYMENT' ? `<button class="btn-order-action" style="background:rgba(255,51,102,0.15); border:1px solid var(--danger); color:var(--danger);" onclick="batalkanPesananSatu('${ord.trxId}')">❌ Batalkan Pesanan</button>` : ''}
                             </div>
@@ -2503,8 +2531,15 @@
             let ord = activeOrdersList.find(o => o.trxId === trxId);
             if (!ord) return;
 
+            const btnCek = document.getElementById(`btn_cek_${trxId}`);
+            if (manual && btnCek) {
+                btnCek.innerText = 'Memeriksa... ⏳';
+                btnCek.disabled = true;
+            }
+
             const qModal = document.getElementById('qrisModal');
             const isQrisModalOpen = (qModal && qModal.style.display === 'flex');
+            let isDepo = Boolean(ord.isDepo || (ord.namaProduk && ord.namaProduk.toUpperCase().includes('DEPOSIT')) || (ord.trxId && ord.trxId.startsWith('DEP')));
 
             try {
                 const res = await fetch(`/api/check-status?trxId=${trxId}&nomor=${userNomor}`);
@@ -2517,14 +2552,19 @@
                     renderBannerOrders();
                     await refreshUserInfoSilent();
                     
-                    // AUTO-CLOSE ANTI-LOOPING MODAL QRIS DENGAN ONE-TIME FLAG
+                    // AUTO-CLOSE ANTI-LOOPING MODAL QRIS DENGAN SINGLE-ALERT GUARD
                     if (isQrisModalOpen && !ord.hasNotifiedSuccess) {
                         ord.hasNotifiedSuccess = true;
                         simpanOrdersAktifKeLocal();
-                        tutupModal();
-                        alert('🎉 PEMBAYARAN SUKSES!\n\nPesanan Kakak telah berhasil terkirim dan sukses!');
+                        let msgAlert = isDepo 
+                            ? `🎉 DEPOSIT SUKSES!\n\nSaldo sebesar Rp ${Number(ord.total).toLocaleString('id-ID')} telah berhasil masuk ke Akun MStoreee Anda!`
+                            : '🎉 PEMBAYARAN SUKSES!\n\nPesanan Kakak telah berhasil terkirim dan sukses!';
+                        showAlertSafe(msgAlert);
                     } else if (manual) {
-                        alert('🎉 Pesanan Anda telah Sukses!');
+                        let msgAlert = isDepo 
+                            ? `🎉 DEPOSIT SUKSES!\n\nSaldo sebesar Rp ${Number(ord.total).toLocaleString('id-ID')} telah berhasil masuk ke Akun MStoreee Anda!`
+                            : '🎉 Pesanan Anda telah Sukses!';
+                        showAlertSafe(msgAlert);
                     }
                 } else if (d.status === 'FAILED') {
                     ord.status = 'FAILED';
@@ -2533,21 +2573,29 @@
                     renderBannerOrders();
                     await refreshUserInfoSilent();
                     if (isQrisModalOpen) tutupModal();
-                    if (manual) alert('❌ Pesanan Gagal: ' + ord.reason);
+                    if (manual) showAlertSafe('❌ Pesanan Gagal: ' + ord.reason);
                 } else if (d.status === 'PAID' || d.status === 'PROCESSING') {
                     if (ord.status !== 'PROCESSING') {
                         ord.status = 'PROCESSING';
                         simpanOrdersAktifKeLocal();
                         renderBannerOrders();
                     }
-                    // AUTO-CLOSE ANTI-LOOPING MODAL QRIS DENGAN ONE-TIME FLAG
+                    if (isDepo) {
+                        await refreshUserInfoSilent();
+                    }
+                    // AUTO-CLOSE ANTI-LOOPING MODAL QRIS DENGAN SINGLE-ALERT GUARD
                     if (isQrisModalOpen && !ord.hasNotifiedPaid) {
                         ord.hasNotifiedPaid = true;
                         simpanOrdersAktifKeLocal();
-                        tutupModal();
-                        alert('⚡ PEMBAYARAN TERVERIFIKASI!\n\nDana transfer telah berhasil diterima. Pesanan sedang diproses otomatis oleh server pusat 🚀');
+                        let msgAlert = isDepo
+                            ? '⚡ PEMBAYARAN TERVERIFIKASI!\n\nDana deposit telah diterima dan saldo akun Anda sedang disinkronkan 💰'
+                            : '⚡ PEMBAYARAN TERVERIFIKASI!\n\nDana transfer telah berhasil diterima. Pesanan sedang diproses otomatis oleh server pusat 🚀';
+                        showAlertSafe(msgAlert);
                     } else if (manual) {
-                        alert('⚡ Pembayaran terverifikasi! Pesanan sedang diproses pusat.');
+                        let msgAlert = isDepo
+                            ? '⚡ Pembayaran deposit diterima! Sistem sedang menyinkronkan saldo Anda.'
+                            : '⚡ Pembayaran terverifikasi! Pesanan sedang diproses pusat.';
+                        showAlertSafe(msgAlert);
                     }
                 } else if (d.status === 'EXPIRED') {
                     ord.status = 'EXPIRED';
@@ -2557,13 +2605,23 @@
                     const orderAge = ord.createdAt ? (Date.now() - ord.createdAt) : 999999;
                     if (manual || orderAge > 35000) {
                         tutupOrderCard(trxId);
-                        if (manual) alert('Pesanan telah dibatalkan atau kedaluwarsa.');
+                        if (manual) showAlertSafe('Pesanan telah dibatalkan atau kedaluwarsa.');
                     }
                 } else {
-                    if (manual) alert('⏳ Status pesanan: Menunggu Pembayaran');
+                    if (manual) {
+                        let msgAlert = isDepo
+                            ? `⏳ Menunggu pembayaran QRIS. Silakan transfer tepat Rp ${Number(ord.total).toLocaleString('id-ID')}.`
+                            : '⏳ Status pesanan: Menunggu Pembayaran';
+                        showAlertSafe(msgAlert);
+                    }
                 }
             } catch(e){
-                if (manual) alert('⚠️ Gagal mengecek status, periksa koneksi internet.');
+                if (manual) showAlertSafe('⚠️ Gagal mengecek status, periksa koneksi internet.');
+            } finally {
+                if (manual && btnCek) {
+                    btnCek.innerText = '🔄 Cek Status';
+                    btnCek.disabled = false;
+                }
             }
         }
 
