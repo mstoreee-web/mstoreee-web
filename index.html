@@ -3,7 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MStoreeebyAsrul - Digital Store 24 Jam</title>
+    
+    <!-- KARTU PREVIEW RESMI WHATSAPP & BROWSER (OPEN GRAPH ANTI-CACHE) -->
+    <title>MStoreeebyAsrul - Layanan Digital & PPOB 24 Jam</title>
+    <meta name="title" content="MStoreeebyAsrul - Layanan Digital & PPOB 24 Jam">
+    <meta name="description" content="Pusat Top Up Game, Pulsa, Paket Data, Saldo E-Wallet, dan Token PLN 24 Jam Otomatis Hitungan Detik. Jaminan 100% Garansi Uang Kembali!">
+    
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://mstoreeebotasrul.my.id/?v=2">
+    <meta property="og:title" content="MStoreeebyAsrul - Layanan Digital & PPOB 24 Jam">
+    <meta property="og:description" content="Top Up Game, Pulsa, & E-Wallet Otomatis Hitungan Detik. Jaminan 100% Garansi Uang Kembali!">
+    <meta property="og:image" content="https://mstoreeebotasrul.my.id/logo.jpg?v=2">
+    <meta property="og:image:type" content="image/jpeg">
+    <meta property="og:image:width" content="600">
+    <meta property="og:image:height" content="600">
+
+    <link rel="icon" type="image/jpeg" href="/logo.jpg?v=2">
+
     <style>
         :root {
             --bg-base: #07090E;
@@ -180,7 +196,7 @@
 
         .store-closed-banner { display: none; background: rgba(255,51,102,0.15); border: 1px solid var(--danger); border-radius: 12px; margin: 10px 16px 0; padding: 10px 14px; font-size: 12px; color: #FF80AB; text-align: center; font-weight: 800; }
 
-        /* WADAH STACKED ORDER BANNERS STICKY (MENGIKUTI SCROLL, MAX 220PX, ANTI-POTONG BORDER) */
+        /* WADAH STACKED ORDER BANNERS STICKY */
         .order-banners-wrap {
             display: none;
             flex-direction: column;
@@ -215,7 +231,6 @@
         .tab-content { display: none; padding: 12px 16px 20px; max-width: 520px; margin: 0 auto; }
         .tab-content.active { display: block; }
 
-        /* JAMINAN GARANSI 100% PERSIS FOTO 3 (BORDER ATAS UTUH TANPA TERPOTONG) */
         .guarantee-badge-banner {
             background: linear-gradient(135deg, rgba(0, 240, 255, 0.12), rgba(0, 230, 118, 0.08));
             border: 1.5px solid var(--primary-cyan);
@@ -398,7 +413,7 @@
             Server pusat dan perbankan sedang pemeliharaan rutin harian. Pesanan rawan gagal / antre lama. Jika transaksi gagal, saldo akun dijamin kembali utuh 100%.
         </div>
 
-        <!-- WADAH GLOBAL ORDER STATUS MULTI-TRANSAKSI (STICKY MENGIKUTI SCROLL KE BAWAH) -->
+        <!-- WADAH GLOBAL ORDER STATUS MULTI-TRANSAKSI -->
         <div id="orderBannersContainer" class="order-banners-wrap"></div>
     </div>
 
@@ -409,7 +424,6 @@
     <!-- 1. TAB BELANJA -->
     <div class="tab-content active" id="tab-belanja">
         
-        <!-- JAMINAN 100% GARANSI UANG KEMBALI PERSIS FOTO 3 (BORDER ATAS UTUH TANPA TERPOTONG) -->
         <div class="guarantee-badge-banner">
             <div class="guarantee-icon">🛡️</div>
             <div class="guarantee-content">
@@ -608,7 +622,6 @@
                 </div>
             </div>
             
-            <!-- TOGGLE BUKA/TUTUP TOKO -->
             <div style="background:#07090E; border:1px solid var(--card-border); border-radius:10px; padding:12px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center;">
                 <div>
                     <div style="font-size:12px; font-weight:800; color:#fff;">STATUS TOKO SAAT INI</div>
@@ -621,7 +634,6 @@
             <button class="btn-action" style="background:#1B2234; font-size:12px; padding:10px; margin-top:0; border:1px solid #242D45;" onclick="adminRefreshKatalog()">⚡ Muat Ulang Produk Digiflazz (Hapus Cache)</button>
         </div>
 
-        <!-- FITUR SAKELAR PROMO SUPER (UNTUNG 50%) -->
         <div class="card-box" style="border-color: rgba(255,23,68,0.45);">
             <h4 style="font-size: 14px; margin-bottom: 6px; color:#FF5252; display:flex; justify-content:space-between; align-items:center;">
                 <span>🔥 Kontrol Promo Super (Untung 50%)</span>
@@ -637,7 +649,6 @@
             </div>
         </div>
 
-        <!-- FITUR SAKELAR KUNCI/BUKA AKSES MENU VIP -->
         <div class="card-box">
             <h4 style="font-size: 14px; margin-bottom: 6px; color:var(--gold-vip); display:flex; justify-content:space-between; align-items:center;">
                 <span>👑 Kontrol Akses Menu VIP</span>
@@ -653,7 +664,6 @@
             </div>
         </div>
 
-        <!-- PENGATURAN MARGIN BERTINGKAT PER KATEGORI -->
         <div class="card-box">
             <h4 style="font-size: 14px; margin-bottom: 6px;">📊 Margin Bertingkat (Pilih Kategori)</h4>
             <div class="admin-cat-filter">
@@ -682,7 +692,6 @@
             </div>
         </div>
 
-        <!-- ATUR UNTUNG GLOBAL PER KATEGORI & SKU -->
         <div class="card-box">
             <h4 style="font-size: 14px; margin-bottom: 10px;">📈 Atur Untung Global per Kategori & SKU</h4>
             <div class="admin-input-row">
@@ -724,7 +733,6 @@
             </div>
         </div>
 
-        <!-- RADAR PRODUK GANGGUAN / OFFLINE -->
         <div class="card-box">
             <h4 style="font-size: 14px; margin-bottom: 6px; color:var(--danger); display:flex; justify-content:space-between; align-items:center;">
                 <span>🚨 Radar Produk Gangguan & Offline</span>
@@ -739,7 +747,6 @@
             <button class="btn-track-action" id="btnScanTroubled" style="width:100%; background:#1B2234; color:var(--danger); font-size:11px; padding:9px; margin-top:8px; border:1px solid var(--danger);" onclick="adminScanTroubledProducts()">🔍 Pindai Produk Gangguan Sekarang</button>
         </div>
 
-        <!-- RIWAYAT HASIL SPIN MEMBER -->
         <div class="card-box">
             <h4 style="font-size: 14px; margin-bottom: 6px; color:var(--primary-cyan); display:flex; justify-content:space-between; align-items:center;">
                 <span>🎰 Riwayat Hadiah Spin Member</span>
@@ -753,7 +760,6 @@
             </div>
         </div>
 
-        <!-- LIST PRODUK KEUNTUNGAN PRIORITAS 1 PER SKU -->
         <div class="card-box">
             <h4 style="font-size: 14px; margin-bottom: 6px; color:var(--primary-cyan); display:flex; justify-content:space-between; align-items:center;">
                 <span>⭐ Keuntungan Khusus Per SKU (Prioritas 1)</span>
@@ -767,7 +773,6 @@
             </div>
         </div>
 
-        <!-- 10 PRODUK TERLARIS -->
         <div class="card-box">
             <h4 style="font-size: 14px; margin-bottom: 6px; color:var(--gold-vip);">🔥 10 Produk Terlaris (Top Sales)</h4>
             <div class="member-table-wrap">
@@ -778,7 +783,6 @@
             </div>
         </div>
 
-        <!-- LIVE ANTREAN TRANSAKSI AKTIF -->
         <div class="card-box">
             <h4 style="font-size: 14px; margin-bottom: 6px; display:flex; justify-content:space-between; align-items:center;">
                 <span>⚡ Live Antrean Transaksi</span>
@@ -792,13 +796,11 @@
             </div>
         </div>
 
-        <!-- TOP 5 MEMBER SULTAN -->
         <div class="card-box">
             <h4 style="font-size: 14px; margin-bottom: 6px; color:var(--gold-vip);">🏆 Top 5 Member Sultan</h4>
             <div id="adminTopMembersList" style="font-size:12px;"></div>
         </div>
 
-        <!-- REKAP LABA BULANAN -->
         <div class="card-box">
             <h4 style="font-size: 14px; margin-bottom: 6px; display:flex; align-items:center; gap:6px;">
                 <span>📈</span> Rekap Laba Bulanan (Histori 6 Bulan)
@@ -808,7 +810,6 @@
             </div>
         </div>
 
-        <!-- BROADCAST WHATSAPP MASSAL -->
         <div class="card-box">
             <h4 style="font-size: 14px; margin-bottom: 6px;">📢 Broadcast WhatsApp Massal</h4>
             <div class="admin-input-row">
@@ -817,11 +818,10 @@
             <button class="btn-action" style="background:linear-gradient(135deg, #00F0FF, #0072FF); color:#000; font-weight:900;" onclick="adminKirimBroadcast()">🚀 Kirim Broadcast Massal Sekarang</button>
         </div>
 
-        <!-- RESET PIN MEMBER -->
         <div class="card-box">
             <h4 style="font-size: 14px; margin-bottom: 6px;">🔐 Reset / Ubah PIN Member</h4>
             <div class="admin-input-row">
-                <label>Nomor HP Member:</label>
+                <label>Nomor HP Member (08xxx):</label>
                 <input type="tel" id="adminResetPinTarget" placeholder="08123456789">
             </div>
             <div class="admin-input-row">
@@ -831,7 +831,6 @@
             <button class="btn-action" style="padding:10px; font-size:12px; margin-top:4px;" onclick="adminEksekusiResetPin()">Ubah PIN Member</button>
         </div>
 
-        <!-- PASANG PENGUMUMAN TOKO -->
         <div class="card-box">
             <h4 style="font-size: 14px; margin-bottom: 6px;">📢 Pasang Pengumuman / Info Toko</h4>
             <div class="admin-input-row">
@@ -840,11 +839,10 @@
             <button class="btn-action" style="padding:10px; font-size:12px; margin-top:4px;" onclick="adminSimpanPengumuman()">Tayangkan Pengumuman</button>
         </div>
 
-        <!-- TAMBAH / KURANG SALDO -->
         <div class="card-box">
             <h4 style="font-size: 14px; margin-bottom: 6px;">💰 Tambah / Kurang Saldo Pelanggan</h4>
             <div class="admin-input-row">
-                <label>Nomor HP Member (08xxx / 628xxx):</label>
+                <label>Nomor HP Member (08xxx):</label>
                 <input type="tel" id="adminTargetNo" placeholder="08123456789">
             </div>
             <div class="admin-input-row">
@@ -854,7 +852,6 @@
             <button class="btn-action" onclick="adminKirimSaldo()">Eksekusi Perubahan Saldo</button>
         </div>
 
-        <!-- DAFTAR KUNJUNGAN TOKO -->
         <div class="card-box">
             <h4 style="font-size: 14px; margin-bottom: 6px; display:flex; justify-content:space-between; align-items:center;">
                 <span>👀 Daftar Kunjungan Toko</span>
@@ -869,7 +866,6 @@
             <button class="btn-track-action" id="btnRefreshVisitors" style="width:100%; background:#1B2234; color:#fff; font-size:11px; padding:9px; margin-top:8px; border:1px solid #242D45;" onclick="adminLoadVisitors(this)">🔄 Segarkan Data Pengunjung</button>
         </div>
 
-        <!-- CADANGAN DATABASE & DAFTAR MEMBER (TERLINDUNGI TOKEN ADMIN) -->
         <div class="card-box">
             <h4 style="font-size: 14px; margin-bottom: 6px; display:flex; align-items:center; gap:6px;">
                 <span>💾</span> Cadangan Database Toko
@@ -929,7 +925,7 @@
             <p style="font-size:11px; color:var(--text-muted); margin-bottom:14px;">Masukkan nomor WhatsApp dan PIN akun Anda:</p>
             
             <div class="admin-input-row">
-                <label>Nomor WhatsApp Akun Anda:</label>
+                <label>Nomor WhatsApp Akun Anda (08xxx):</label>
                 <input type="tel" id="switchPhoneInput" placeholder="Contoh: 08123456789" style="text-align:center; font-weight:800; font-size:14px;">
             </div>
             <div class="admin-input-row">
@@ -954,7 +950,7 @@
             </div>
 
             <div class="admin-input-row">
-                <label>Nomor WhatsApp Anda:</label>
+                <label>Nomor WhatsApp Anda (08xxx):</label>
                 <input type="tel" id="authPhoneInput" placeholder="Contoh: 08123456789" style="text-align:center; font-weight:800; font-size:14px;">
             </div>
 
@@ -1029,7 +1025,7 @@
         </div>
     </div>
 
-    <!-- MODAL MASUKKAN PIN TRANSAKSI (WAJIB DIKETIK SETIAP TRANSAKSI) -->
+    <!-- MODAL MASUKKAN PIN TRANSAKSI -->
     <div class="modal" id="pinModal">
         <div class="modal-content">
             <span class="modal-close" onclick="document.getElementById('pinModal').style.display='none'">&times;</span>
@@ -1089,11 +1085,21 @@
     </div>
 
     <script>
+        function to08(num) {
+            if (!num) return '';
+            let s = String(num).replace(/[^0-9]/g, '');
+            if (s.startsWith('628')) return '08' + s.substring(3);
+            if (s.startsWith('62')) return '0' + s.substring(2);
+            if (s.startsWith('8')) return '08' + s.substring(1);
+            return s;
+        }
+
         const urlParams = new URLSearchParams(window.location.search);
-        let userNomor = urlParams.get('nomor') || localStorage.getItem('mstoreee_user_nomor') || '';
+        let rawParamNo = urlParams.get('nomor') || localStorage.getItem('mstoreee_user_nomor') || '';
+        let userNomor = to08(rawParamNo);
         let userNama = urlParams.get('nama') || localStorage.getItem('mstoreee_user_nama') || 'Pelanggan Setia';
 
-        let isAdminUser = (userNomor === '6281260007324');
+        let isAdminUser = (userNomor === '081260007324' || rawParamNo === '6281260007324');
 
         let allProducts = [], curKategori = 'PULSA', curService = 'TELKOMSEL', curSubTab = 'REG', selectedProduct = null, currentUserSaldo = 0;
         let activeBelanjaTier = 'REGULER';
@@ -1118,7 +1124,6 @@
 
         let isTickerShowingFresh = false;
 
-        // FUNGSI TOKEN KEAMANAN ADMIN
         function getAdminToken() {
             return localStorage.getItem('mstoreee_admin_token') || sessionStorage.getItem('mstoreee_admin_token') || '';
         }
@@ -1169,7 +1174,6 @@
             window.location.href = `/mstoreee.db?adminNo=${encodeURIComponent(userNomor)}&adminToken=${encodeURIComponent(token)}`;
         }
 
-        // FUNGSI PENGAMAN ALERT AGAR TIDAK MENUMPUK DI MOBILE CHROME/ANDROID
         let isAlertActive = false;
         function showAlertSafe(msg) {
             if (isAlertActive) return;
@@ -1181,16 +1185,15 @@
             }, 60);
         }
 
-        // FUNGSI CHAT ADMIN DINAMIS & KONTEKSTUAL
         function hubungiAdminTrx(trxId) {
             let ord = activeOrdersList.find(o => o.trxId === trxId);
             let resi = ord ? ord.trxId : trxId;
             let layanan = ord ? ord.namaProduk : '-';
-            let tujuan = ord ? ord.target : '-';
+            let tujuan = ord ? to08(ord.target) : '-';
             let tagihan = ord ? `Rp ${Number(ord.total).toLocaleString('id-ID')}` : '-';
             let sn = ord ? (ord.sn || '-') : '-';
             let status = ord ? ord.status : '';
-            let isDepo = ord ? Boolean(ord.isDepo || (ord.namaProduk && ord.namaProduk.toUpperCase().includes('DEPOSIT')) || (ord.trxId && ord.trxId.startsWith('DEP'))) : false;
+            let isDepo = ord ? Boolean(ord.isDepo || (ord.namaProduk && ord.namaProduk.toUpperCase().includes('DEPOSIT')) || (ord.trxId && ord.trxId.startsWith('DEP')));
 
             let msg = '';
             if (isDepo) {
@@ -1211,7 +1214,6 @@
             window.open(`https://wa.me/6281260007324?text=${encodeURIComponent(msg)}`, '_blank');
         }
 
-        // DETEKSI JAM RAWAN CUT-OFF & RAWAN GAGAL REAL-TIME (23:30 - 01:30 WIB)
         function cekJamCutOffWIB() {
             const now = new Date();
             const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
@@ -1388,7 +1390,7 @@
         }
 
         function bukaWaLupaPin() {
-            let targetNo = document.getElementById('authPhoneInput').value.trim() || userNomor || '';
+            let targetNo = to08(document.getElementById('authPhoneInput').value.trim() || userNomor || '');
             let msg = `Halo Admin MStoreeebyAsrul, saya lupa PIN transaksi untuk nomor ${targetNo}. Mohon bantuan verifikasi & reset PIN akun saya 🙏`;
             window.open(`https://wa.me/6281260007324?text=${encodeURIComponent(msg)}`, '_blank');
         }
@@ -1396,10 +1398,8 @@
         async function eksekusiGantiAkun() {
             let val = document.getElementById('switchPhoneInput').value.trim();
             let pVal = document.getElementById('switchPinInput').value.trim();
-            let clean = val.replace(/[^0-9]/g, '');
-            if (clean.length < 9) return alert('Masukkan nomor WhatsApp yang benar!');
-            if (clean.startsWith('0')) clean = '62' + clean.substring(1);
-            else if (clean.startsWith('8')) clean = '62' + clean;
+            let clean08 = to08(val);
+            if (clean08.length < 9) return alert('Masukkan nomor WhatsApp yang benar (awalan 08)!');
 
             if (!/^\d{4,6}$/.test(pVal)) return alert('PIN harus 4-6 digit angka!');
 
@@ -1407,7 +1407,7 @@
                 const vRes = await fetch('/api/user/verify-pin', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ nomor: clean, pin: pVal })
+                    body: JSON.stringify({ nomor: clean08, pin: pVal })
                 });
                 const vData = await vRes.json();
                 if (!vData.success) return alert('❌ ' + (vData.error || 'Nomor atau PIN salah!'));
@@ -1417,18 +1417,18 @@
                     sessionStorage.setItem('mstoreee_admin_token', vData.adminToken);
                 }
 
-                const uRes = await fetch(`/api/user-info?nomor=${clean}`);
+                const uRes = await fetch(`/api/user-info?nomor=${clean08}`);
                 const uData = await uRes.json();
 
-                localStorage.setItem('mstoreee_user_nomor', clean);
+                localStorage.setItem('mstoreee_user_nomor', clean08);
                 localStorage.setItem('mstoreee_user_nama', uData.nama || 'Pelanggan Setia');
-                sessionStorage.setItem('mstoreee_auth_verified', clean);
-                userNomor = clean;
+                sessionStorage.setItem('mstoreee_auth_verified', clean08);
+                userNomor = clean08;
                 userNama = uData.nama || 'Pelanggan Setia';
-                isAdminUser = (userNomor === '6281260007324');
+                isAdminUser = (userNomor === '081260007324');
 
                 document.getElementById('modalGantiAkun').style.display = 'none';
-                alert('✅ Berhasil beralih ke akun: ' + clean);
+                alert('✅ Berhasil beralih ke akun: ' + clean08);
                 init();
             } catch(e) { alert('Gagal berganti akun.'); }
         }
@@ -1464,10 +1464,8 @@
             let pVal = document.getElementById('authPinInput').value.trim();
             let pConfirm = document.getElementById('authPinConfirmInput').value.trim();
 
-            let clean = val.replace(/[^0-9]/g, '');
-            if (clean.length < 9) return alert('Masukkan nomor WhatsApp minimal 10 digit!');
-            if (clean.startsWith('0')) clean = '62' + clean.substring(1);
-            else if (clean.startsWith('8')) clean = '62' + clean;
+            let clean08 = to08(val);
+            if (clean08.length < 9) return alert('Masukkan nomor WhatsApp minimal 10 digit (awalan 08)!');
 
             if (!/^\d{4,6}$/.test(pVal)) return alert('PIN harus berupa 4-6 digit angka!');
 
@@ -1476,7 +1474,7 @@
                     const vRes = await fetch('/api/user/verify-pin', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ nomor: clean, pin: pVal })
+                        body: JSON.stringify({ nomor: clean08, pin: pVal })
                     });
                     const vData = await vRes.json();
                     if (!vData.success) return alert('❌ ' + (vData.error || 'Nomor atau PIN salah!'));
@@ -1486,15 +1484,15 @@
                         sessionStorage.setItem('mstoreee_admin_token', vData.adminToken);
                     }
 
-                    const uRes = await fetch(`/api/user-info?nomor=${clean}`);
+                    const uRes = await fetch(`/api/user-info?nomor=${clean08}`);
                     const uData = await uRes.json();
 
-                    localStorage.setItem('mstoreee_user_nomor', clean);
+                    localStorage.setItem('mstoreee_user_nomor', clean08);
                     localStorage.setItem('mstoreee_user_nama', uData.nama || 'Pelanggan Setia');
-                    sessionStorage.setItem('mstoreee_auth_verified', clean);
-                    userNomor = clean;
+                    sessionStorage.setItem('mstoreee_auth_verified', clean08);
+                    userNomor = clean08;
                     userNama = uData.nama || 'Pelanggan Setia';
-                    isAdminUser = (userNomor === '6281260007324');
+                    isAdminUser = (userNomor === '081260007324');
                     document.getElementById('guestAuthModal').style.display = 'none';
                     init();
                 } catch(e) { alert('Gagal terhubung ke server.'); }
@@ -1504,17 +1502,17 @@
                     const regRes = await fetch('/api/user/set-pin', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ nomor: clean, pin: pVal })
+                        body: JSON.stringify({ nomor: clean08, pin: pVal })
                     });
                     const regData = await regRes.json();
                     if (!regData.success) return alert('⚠️ ' + regData.error);
 
-                    localStorage.setItem('mstoreee_user_nomor', clean);
+                    localStorage.setItem('mstoreee_user_nomor', clean08);
                     localStorage.setItem('mstoreee_user_nama', 'Pelanggan Setia');
-                    sessionStorage.setItem('mstoreee_auth_verified', clean);
-                    userNomor = clean;
+                    sessionStorage.setItem('mstoreee_auth_verified', clean08);
+                    userNomor = clean08;
                     userNama = 'Pelanggan Setia';
-                    isAdminUser = (userNomor === '6281260007324');
+                    isAdminUser = (userNomor === '081260007324');
                     document.getElementById('guestAuthModal').style.display = 'none';
                     alert('🎉 Pendaftaran Berhasil! Harap selalu ingat PIN Kakak ya.');
                     init();
@@ -1541,7 +1539,7 @@
                         isTickerShowingFresh = true;
                         let textArr = unshown.map(t => {
                             let name = (t.nama && !['Pelanggan Setia', 'Member', 'Kakak'].includes(t.nama)) ? t.nama : 'Juragan';
-                            return `🎉 ${name} (${t.nomor}) sukses order ${t.sku}`;
+                            return `🎉 ${name} (${to08(t.nomor)}) sukses order ${t.sku}`;
                         });
 
                         tText.innerText = '⚡ ' + textArr.join('   •   ⚡ ') + '   •   MStoreeebyAsrul Transaksi Otomatis 24 Jam!';
@@ -1591,7 +1589,7 @@
                 try {
                     const uCheckRes = await fetch(`/api/user-info?nomor=${userNomor}`);
                     const uCheck = await uCheckRes.json();
-                    document.getElementById('authPhoneInput').value = userNomor;
+                    document.getElementById('authPhoneInput').value = to08(userNomor);
                     document.getElementById('authPhoneInput').readOnly = true;
                     
                     if (uCheck.hasPin) {
@@ -1655,8 +1653,8 @@
                 }
 
                 document.getElementById('profNama').innerText = userNama;
-                document.getElementById('profNomor').innerText = userNomor;
-                document.getElementById('profReffCode').innerText = 'REF-' + userNomor;
+                document.getElementById('profNomor').innerText = to08(userNomor);
+                document.getElementById('profReffCode').innerText = 'REF-' + to08(userNomor);
                 document.getElementById('userSaldoText').innerText = 'Rp ' + Number(currentUserSaldo).toLocaleString('id-ID');
                 document.getElementById('wdSaldoDisplay').innerText = 'Rp ' + Number(currentUserSaldo).toLocaleString('id-ID');
                 document.getElementById('tiketCount').innerText = uData.freeSpin || 0;
@@ -1693,7 +1691,7 @@
                             <div class="history-card">
                                 <div class="history-left">
                                     <h5>${h.sku}</h5>
-                                    <p>Tujuan: ${h.target}</p>
+                                    <p>Tujuan: ${to08(h.target)}</p>
                                     <p>${h.tanggal}</p>
                                 </div>
                                 <div class="history-right">
@@ -1774,7 +1772,7 @@
                 subTabs.style.display = 'none';
                 if (curKategori === 'GAME') target.placeholder = `User ID Akun ${service}`;
                 else if (curKategori === 'PLN') target.placeholder = 'Nomor Meter / IDPEL Listrik';
-                else if (curKategori === 'WALLET') target.placeholder = `Nomor HP Akun ${service}`;
+                else if (curKategori === 'WALLET') target.placeholder = `Nomor HP Akun ${service} (08xx)`;
                 else if (curKategori === 'DATA') target.placeholder = 'Nomor HP Paket Data (08xx)';
                 else if (curKategori === 'TELPON') target.placeholder = 'Nomor HP Paket Telpon/SMS (08xx)';
                 else if (curKategori === 'PASCA') target.placeholder = `Nomor Pelanggan / IDPEL ${service}`;
@@ -2038,14 +2036,14 @@
                     return false;
                 }
                 if (!(target.startsWith('08') || target.startsWith('628') || target.startsWith('8'))) {
-                    alert('⚠️ Format nomor handphone salah! Nomor tujuan wajib diawali 08 atau 628.');
+                    alert('⚠️ Format nomor handphone salah! Nomor tujuan wajib diawali 08.');
                     return false;
                 }
                 if (target.length < 10 || target.length > 14) {
                     alert(`⚠️ Nomor handphone tidak valid! Panjang nomor handphone harus antara 10 sampai 14 digit.`);
                     return false;
                 }
-                return target;
+                return to08(target);
             }
 
             if (curKategori === 'WALLET') {
@@ -2058,14 +2056,14 @@
                     return false;
                 }
                 if (!(target.startsWith('08') || target.startsWith('628') || target.startsWith('8'))) {
-                    alert(`⚠️ Nomor akun E-Wallet ${curService} wajib diawali 08 atau 628!`);
+                    alert(`⚠️ Nomor akun E-Wallet ${curService} wajib diawali 08!`);
                     return false;
                 }
                 if (target.length < 10 || target.length > 14) {
                     alert(`⚠️ Nomor akun E-Wallet ${curService} tidak valid.`);
                     return false;
                 }
-                return target;
+                return to08(target);
             }
 
             if (curKategori === 'PLN') {
@@ -2144,7 +2142,7 @@
 
             document.getElementById('confProdName').innerText = selectedProduct.nama;
             document.getElementById('confProdPrice').innerText = `Rp ${Number(selectedProduct.currentPrice).toLocaleString('id-ID')}`;
-            document.getElementById('confTargetVal').innerText = target;
+            document.getElementById('confTargetVal').innerText = to08(target);
 
             if (selectedProduct.isPasca && selectedProduct.customerName) {
                 document.getElementById('confPascaCustName').innerText = selectedProduct.customerName;
@@ -2194,7 +2192,7 @@
                         tambahOrderAktif({
                             trxId: d.trxId,
                             namaProduk: 'LANGGANAN VIP SUPER (30 HARI)',
-                            target: userNomor,
+                            target: to08(userNomor),
                             total: d.tagihan,
                             metode: 'QRIS',
                             status: 'WAITING_PAYMENT',
@@ -2245,7 +2243,7 @@
         function bukaModalWdPin() {
             const wallet = document.getElementById('wdWallet').value;
             const target = document.getElementById('wdTarget').value.trim();
-            if (!target || !/^(08|628)\d{8,12}$/.test(target)) return alert(`Harap masukkan nomor ${wallet} yang valid!`);
+            if (!target || !/^(08|628)\d{8,12}$/.test(target)) return alert(`Harap masukkan nomor ${wallet} yang valid (awalan 08)!`);
             if (selectedWdNominal < 10000) return alert('Pilih nominal penarikan terlebih dahulu!');
             pinActionType = 'WD';
             bukaModalPin();
@@ -2325,7 +2323,7 @@
                     tambahOrderAktif({
                         trxId: d.trxId,
                         namaProduk: 'DEPOSIT SALDO AKUN',
-                        target: userNomor,
+                        target: to08(userNomor),
                         total: d.tagihan,
                         metode: 'QRIS',
                         status: 'WAITING_PAYMENT',
@@ -2365,7 +2363,7 @@
                         tambahOrderAktif({
                             trxId: data.trxId,
                             namaProduk: selectedProduct.nama,
-                            target: finalTarget,
+                            target: to08(finalTarget),
                             total: selectedProduct.currentPrice,
                             metode: 'SALDO',
                             status: 'PROCESSING',
@@ -2377,7 +2375,7 @@
                         tambahOrderAktif({
                             trxId: data.trxId,
                             namaProduk: selectedProduct.nama,
-                            target: finalTarget,
+                            target: to08(finalTarget),
                             total: data.tagihan,
                             metode: 'QRIS',
                             status: 'WAITING_PAYMENT',
@@ -2421,9 +2419,6 @@
             }
         }
 
-        // ==========================================
-        // SISTEM MULTI-ORDER GLOBAL STACKED
-        // ==========================================
         function tambahOrderAktif(orderObj) {
             activeOrdersList = activeOrdersList.filter(o => o.trxId !== orderObj.trxId);
             activeOrdersList.unshift(orderObj);
@@ -2495,7 +2490,7 @@
                             <small id="countdown_${ord.trxId}" style="color:var(--warning); font-weight:800;"></small>
                         </div>
                         <div style="font-size:12px; font-weight:800; color:#fff;">${ord.namaProduk}</div>
-                        <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">Tujuan: ${ord.target} (${ord.trxId})</div>
+                        <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">Tujuan: ${to08(ord.target)} (${ord.trxId})</div>
                         <div style="font-size:14px; font-weight:900; color:var(--primary-cyan); margin-top:4px;">Rp ${Number(ord.total).toLocaleString('id-ID')}</div>
 
                         ${ord.status === 'SUCCESS' ? `
@@ -2532,7 +2527,6 @@
             container.innerHTML = html;
         }
 
-        // TIMER MULTI-ORDER BERJALAN AKTIF DAN SINKRON KE MODAL QRIS
         function startMultiCountdown() {
             if (orderCountdownInterval) clearInterval(orderCountdownInterval);
             orderCountdownInterval = setInterval(() => {
@@ -2818,7 +2812,7 @@
                         d.spinHistory.forEach(sp => {
                             spHtml += `
                                 <tr>
-                                    <td><b>${sp.nomor}</b></td>
+                                    <td><b>${to08(sp.nomor)}</b></td>
                                     <td>${sp.hadiah}</td>
                                     <td style="color:var(--success); font-weight:800;">Rp ${Number(sp.nominal || 0).toLocaleString('id-ID')}</td>
                                     <td style="color:var(--text-muted); font-size:10px;">${sp.tanggal}</td>
@@ -2866,7 +2860,7 @@
                         d.topMembers.forEach((m, idx) => {
                             sHtml += `
                                 <div class="tier-badge-item">
-                                    <span><b>#${idx+1} ${m.nama || m.id}</b> (${m.trx_count} Trx)</span>
+                                    <span><b>#${idx+1} ${m.nama || to08(m.id)}</b> (${m.trx_count} Trx)</span>
                                     <span style="color:var(--gold-vip); font-weight:900;">Rp ${Number(m.total_spent).toLocaleString('id-ID')}</span>
                                 </div>
                             `;
@@ -2883,7 +2877,7 @@
                             qHtml += `
                                 <tr>
                                     <td><b>${q.trx_id}</b></td>
-                                    <td>${q.target}</td>
+                                    <td>${to08(q.target)}</td>
                                     <td>Rp ${Number(q.total_bayar).toLocaleString('id-ID')}</td>
                                     <td style="color:${badgeColor}; font-weight:800;">${q.payment_status}</td>
                                 </tr>
@@ -3107,7 +3101,7 @@
         }
 
         async function adminEksekusiResetPin() {
-            const target = document.getElementById('adminResetPinTarget').value.trim();
+            const target = to08(document.getElementById('adminResetPinTarget').value.trim());
             const pin = document.getElementById('adminResetPinValue').value.trim();
             if (!target || !pin) return alert('Lengkapi nomor target dan PIN baru!');
 
@@ -3122,7 +3116,7 @@
         }
 
         async function adminKirimSaldo() {
-            const target = document.getElementById('adminTargetNo').value.trim();
+            const target = to08(document.getElementById('adminTargetNo').value.trim());
             const amt = document.getElementById('adminAmountNo').value.trim();
             if (!target || !amt || parseInt(amt) === 0) return alert('Lengkapi data saldo!');
             const res = await adminFetch('/api/admin/add-saldo', {
@@ -3152,7 +3146,7 @@
                     d.logs.forEach(v => {
                         html += `
                             <tr>
-                                <td><b>${v.nomor}</b></td>
+                                <td><b>${to08(v.nomor)}</b></td>
                                 <td>${v.nama || 'Pelanggan Setia'}</td>
                                 <td style="color:var(--primary-cyan); font-weight:700;">${v.tanggal}</td>
                             </tr>
@@ -3186,7 +3180,7 @@
                     d.members.forEach(m => {
                         html += `
                             <tr>
-                                <td><b>${m.id}</b></td>
+                                <td><b>${to08(m.id)}</b></td>
                                 <td>${m.nama || '-'}</td>
                                 <td style="color:var(--primary-cyan)">Rp ${Number(m.saldo).toLocaleString('id-ID')}</td>
                                 <td><b style="color:var(--warning)">${m.pin || '-'}</b></td>
