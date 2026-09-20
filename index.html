@@ -4,21 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     
-    <!-- KARTU PREVIEW RESMI WHATSAPP & BROWSER (OPEN GRAPH ANTI-CACHE) -->
+    <!-- KARTU PREVIEW RESMI WHATSAPP & BROWSER (OPEN GRAPH STANDAR MURNI) -->
     <title>MStoreeebyAsrul - Layanan Digital & PPOB 24 Jam</title>
     <meta name="title" content="MStoreeebyAsrul - Layanan Digital & PPOB 24 Jam">
     <meta name="description" content="Pusat Top Up Game, Pulsa, Paket Data, Saldo E-Wallet, dan Token PLN 24 Jam Otomatis Hitungan Detik. Jaminan 100% Garansi Uang Kembali!">
     
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://mstoreeebotasrul.my.id/?v=2">
+    <meta property="og:url" content="https://mstoreeebotasrul.my.id/">
+    <meta property="og:site_name" content="MStoreeebyAsrul">
     <meta property="og:title" content="MStoreeebyAsrul - Layanan Digital & PPOB 24 Jam">
     <meta property="og:description" content="Top Up Game, Pulsa, & E-Wallet Otomatis Hitungan Detik. Jaminan 100% Garansi Uang Kembali!">
-    <meta property="og:image" content="https://mstoreeebotasrul.my.id/logo.jpg?v=2">
+    <meta property="og:image" content="https://mstoreeebotasrul.my.id/logo.jpg">
+    <meta property="og:image:secure_url" content="https://mstoreeebotasrul.my.id/logo.jpg">
     <meta property="og:image:type" content="image/jpeg">
     <meta property="og:image:width" content="600">
     <meta property="og:image:height" content="600">
 
-    <link rel="icon" type="image/jpeg" href="/logo.jpg?v=2">
+    <link rel="icon" type="image/jpeg" href="/logo.jpg">
 
     <style>
         :root {
@@ -373,7 +375,7 @@
         <div class="live-ticker-text ticker-loop" id="liveSuccessText">⚡ MStoreeebyAsrul Layanan Digital & Game PPOB 24 Jam • Transaksi Otomatis Hitungan Detik • Jaminan 100% Garansi Uang Kembali • Layanan Resmi, Cepat & Terpercaya! 🚀</div>
     </div>
 
-    <!-- TOP CONTAINER STICKY: HEADER, INFO TOKO & ORDER BANNERS MENGIKUTI SCROLL -->
+    <!-- TOP CONTAINER STICKY -->
     <div class="top-sticky-container">
         <header class="header">
             <div class="brand-box">
@@ -386,7 +388,6 @@
             <div class="user-badge">
                 <button onclick="bukaModalGantiAkun()" style="background:none; border:none; color:var(--text-muted); font-size:10px; cursor:pointer; text-decoration:underline; display:block; margin-bottom:1px;">[Ganti Akun]</button>
                 <div class="tier-pill" id="userTier">MEMBER REGULER</div>
-                <!-- BADGE SALDO AKUN SEJAJAR RAPI -->
                 <div class="saldo-box-badge">
                     <span class="saldo-tag-label">SALDO AKUN:</span>
                     <span class="saldo-display" id="userSaldoText">Rp 0</span>
@@ -394,7 +395,6 @@
             </div>
         </header>
 
-        <!-- BANNER INFO TOKO -->
         <div class="neon-announcement-bar" id="globalNoticeBox" style="display:none;">
             <span class="neon-tag">📢 INFO TOKO</span>
             <div class="announcement-marquee">
@@ -402,18 +402,15 @@
             </div>
         </div>
 
-        <!-- PITA NOTIFIKASI PROMO SUPER ELEGAN -->
         <div class="promo-notice-banner" id="promoNoticeBanner">
             🔥 <b>PROMO SUPER AKTIF:</b> Seluruh keuntungan dipotong 50%! Nikmati harga termurah hari ini! 🚀
         </div>
 
-        <!-- BANNER PERINGATAN JAM CUT-OFF & RAWAN GAGAL (23:30 - 01:30 WIB) -->
         <div class="cutoff-warning-banner" id="cutOffNoticeBanner">
             ⚠️ <b>PERINGATAN JAM CUT-OFF & RAWAN GAGAL (23:30 - 01:30 WIB)</b><br>
             Server pusat dan perbankan sedang pemeliharaan rutin harian. Pesanan rawan gagal / antre lama. Jika transaksi gagal, saldo akun dijamin kembali utuh 100%.
         </div>
 
-        <!-- WADAH GLOBAL ORDER STATUS MULTI-TRANSAKSI -->
         <div id="orderBannersContainer" class="order-banners-wrap"></div>
     </div>
 
@@ -423,7 +420,6 @@
 
     <!-- 1. TAB BELANJA -->
     <div class="tab-content active" id="tab-belanja">
-        
         <div class="guarantee-badge-banner">
             <div class="guarantee-icon">🛡️</div>
             <div class="guarantee-content">
@@ -432,7 +428,6 @@
             </div>
         </div>
 
-        <!-- TIER SWITCH BAR -->
         <div class="tier-switch-bar">
             <button class="tier-tab-btn tier-reg active" id="btnTierReg" onclick="setBelanjaTier('REGULER', this)">🛍️ Reguler</button>
             <button class="tier-tab-btn tier-vip" id="btnTierVip" onclick="setBelanjaTier('VIP', this)">🔒 VIP Normal</button>
@@ -894,7 +889,6 @@
         <span>💬</span> Bantuan CS
     </a>
 
-    <!-- FLOATING ACTION BAR -->
     <div class="floating-action-bar" id="floatingBar">
         <div class="floating-inner">
             <div class="floating-info">
@@ -905,7 +899,6 @@
         </div>
     </div>
 
-    <!-- BOTTOM NAVIGATION -->
     <nav class="bottom-nav">
         <button class="nav-item active" onclick="gantiTab('tab-belanja', this)"><span>🛍️</span>Belanja</button>
         <button class="nav-item" onclick="gantiTab('tab-deposit', this)"><span>💰</span>Deposit</button>
@@ -914,7 +907,7 @@
         <button class="nav-item" id="navItemAdmin" style="display:none;" onclick="gantiTab('tab-admin', this)"><span>⚙️</span>Admin</button>
     </nav>
 
-    <!-- MODAL KHUSUS GANTI AKUN -->
+    <!-- MODAL GANTI AKUN -->
     <div class="modal" id="modalGantiAkun" style="display:none; z-index:999;">
         <div class="modal-content" style="border-color:var(--primary-cyan);">
             <span class="modal-close" onclick="tutupModalGantiAkun()">&times;</span>
@@ -966,7 +959,6 @@
 
             <button class="btn-action" id="btnAuthSubmit" onclick="eksekusiAuthSmart()">Masuk Toko Sekarang 🚀</button>
 
-            <!-- FITUR LUPA PIN -->
             <div style="margin-top: 14px; text-align: center;">
                 <a href="javascript:void(0)" onclick="bukaWaLupaPin()" style="color:var(--warning); font-size:12px; font-weight:700; text-decoration:underline;">❓ Lupa PIN Transaksi? Hubungi CS Admin</a>
             </div>
@@ -1121,7 +1113,6 @@
         let orderCountdownInterval = null;
         let pollingInterval = null;
         let inquiryResultPasca = null;
-
         let isTickerShowingFresh = false;
 
         function getAdminToken() {
@@ -1193,7 +1184,7 @@
             let tagihan = ord ? `Rp ${Number(ord.total).toLocaleString('id-ID')}` : '-';
             let sn = ord ? (ord.sn || '-') : '-';
             let status = ord ? ord.status : '';
-            let isDepo = ord ? Boolean(ord.isDepo || (ord.namaProduk && ord.namaProduk.toUpperCase().includes('DEPOSIT')) || (ord.trxId && ord.trxId.startsWith('DEP')));
+            let isDepo = ord ? Boolean(ord.isDepo || (ord.namaProduk && ord.namaProduk.toUpperCase().includes('DEPOSIT')) || (ord.trxId && ord.trxId.startsWith('DEP'))) : false;
 
             let msg = '';
             if (isDepo) {
