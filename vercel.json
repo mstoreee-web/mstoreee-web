@@ -1,16 +1,28 @@
 {
   "rewrites": [
     {
-      "source": "/api/:path*",
-      "destination": "http://202.155.157.116:3000/api/:path*"
+      "source": "/api/:match*",
+      "destination": "http://202.155.157.116:3000/api/:match*"
     },
     {
-      "source": "/(qris.jpg|logo.jpg|logo.png)",
-      "destination": "http://202.155.157.116:3000/$1"
+      "source": "/bg.jpg",
+      "destination": "http://202.155.157.116:3000/bg.jpg"
     },
     {
-      "source": "/(.*)",
-      "destination": "/index.html"
+      "source": "/logo.jpg",
+      "destination": "http://202.155.157.116:3000/logo.jpg"
+    },
+    {
+      "source": "/qris.jpg",
+      "destination": "http://202.155.157.116:3000/qris.jpg"
+    },
+    {
+      "source": "/icons/:match*",
+      "destination": "http://202.155.157.116:3000/icons/:match*"
+    },
+    {
+      "source": "/mstoreee.db",
+      "destination": "http://202.155.157.116:3000/mstoreee.db"
     }
   ]
 }
