@@ -1,8 +1,8 @@
 {
   "rewrites": [
     {
-      "source": "/:path*",
-      "destination": "http://202.155.157.116:3000/:path*"
+      "source": "/(.*)",
+      "destination": "http://202.155.157.116:3000/$1"
     }
   ]
 }
